@@ -54,7 +54,7 @@ class _WaveState extends State<Wave> with SingleTickerProviderStateMixin {
             animation: _controller,
             builder: (BuildContext context, Widget child) {
               return ClipPath(
-                clipper: WaveClipper(_controller.value, _points),
+                clipper: WaveClipper(_points),
                 child: BlueGradient(),
               );
             },
@@ -66,7 +66,9 @@ class _WaveState extends State<Wave> with SingleTickerProviderStateMixin {
       void _initPoints() {
         _points = [];
         Random r = Random();
-        for (int i = 0; i < widget.size.width; i++) {
+        _widthStart = (5*widget.size.width/12).round();
+        _widthEnd = (7*widget.size.width/12).round();
+        for (int i = _widthStart; i < _widthEnd; i++) {
           double x = i.toDouble();
     
           // Set this point's y-coordinate to a random value
@@ -77,14 +79,15 @@ class _WaveState extends State<Wave> with SingleTickerProviderStateMixin {
         }
       }
     }
-    
+
+int _widthStart;
+int _widthEnd;
 
 
 class WaveClipper extends CustomClipper<Path> {
-  double _value;
   List<Offset> _wavePoints;
 
-  WaveClipper(this._value, this._wavePoints);
+  WaveClipper(this._wavePoints);
 
   @override
   Path getClip(Size size) {
@@ -92,8 +95,8 @@ class WaveClipper extends CustomClipper<Path> {
     _modulateRandom(size);
     path.addPolygon(_wavePoints, false);
 
-    path.lineTo(size.width, size.height);
-    path.lineTo(0.0, size.height);
+    path.lineTo(_widthEnd.toDouble(), size.height);
+    path.lineTo(_widthStart.toDouble(), size.height);
     path.close();
     return path;
   }
@@ -103,7 +106,7 @@ class WaveClipper extends CustomClipper<Path> {
     // The maximum number of pixels that points on a random wave can change by.
     final maxDiff = 3.0;
     Random r = Random();
-    for (int i = 0; i < size.width; i++) {
+    for (int i = 0; i < _wavePoints.length; i++) {
       var point = _wavePoints[i];
 
       // Generate a random number between  -maxDiff and +maxDiff
@@ -116,46 +119,6 @@ class WaveClipper extends CustomClipper<Path> {
       Offset newPoint = Offset(point.dx, newY);
       _wavePoints[i] = newPoint;
     }
-  }
-
-  //ignore: unused_element
-  void _makeSineWave(Size size) {
-    final amplitude = size.height / 3;
-    final yOffset = amplitude;
-
-    for (int x = 0; x < size.width; x++) {
-      double y = amplitude * sin(x / 4) + yOffset;
-
-      Offset newPoint = Offset(x.toDouble(), y);
-      _wavePoints[x] = newPoint;
-    }
-  }
-
-  //ignore: unused_element
-  Path _bezierWave(Size size) {
-    /*
-    Adapted from 
-    https://github.com/felixblaschke/simple_animations_example_app/blob/master/lib/examples/fancy_background.dart
-    */
-
-    final v = _value * pi * 2;
-    final path = Path();
-
-    final y1 = sin(v);
-    final y2 = sin(v + pi / 2);
-    final y3 = sin(v + pi);
-
-    final startPointY = size.height * (0.5 + 0.4 * y1);
-    final controlPointY = size.height * (0.5 + 0.4 * y2);
-    final endPointY = size.height * (0.5 + 0.4 * y3);
-
-    path.moveTo(size.width * 0, startPointY);
-    path.quadraticBezierTo(
-        size.width / 5, controlPointY, size.width, endPointY);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
   }
 
   @override
