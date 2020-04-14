@@ -7,7 +7,30 @@ import 'package:speaker_timer/screen/background/widgets/sand.dart';
 import 'package:speaker_timer/screen/background/widgets/wave.dart';
 import 'dart:math' as math;
 
-class Background extends StatelessWidget {
+class Background extends StatefulWidget {
+
+  final int duration = 20;
+
+  @override
+  _BackgroundState createState() => _BackgroundState();
+}
+
+class _BackgroundState extends State<Background> with SingleTickerProviderStateMixin{
+
+  AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(vsync: this, duration: Duration(seconds: widget.duration));
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +43,11 @@ class Background extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             CustomAppBar(),
-            Sand(),
-            Transform.rotate(
+            Sand(controller: controller, bottom: true,),
+            /*Transform.rotate(
               angle: math.pi,
               child: Sand(),
-            ),
+            ),*/
             /*Container(
               height: 11.0/12.0*size.height,
               width: size.width,

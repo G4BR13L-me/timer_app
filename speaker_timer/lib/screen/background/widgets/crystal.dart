@@ -10,7 +10,7 @@ class Crystal extends StatelessWidget {
       child: Container(
         width: 50,
         height: 50,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(2.0),color: Colors.yellowAccent),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.0),color: Colors.yellowAccent),
       ),
     );
   }
