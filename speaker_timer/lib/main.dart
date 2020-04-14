@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/status.dart';
-import 'package:speaker_timer/screen/background.dart';
+import 'package:speaker_timer/screen/background/background.dart';
 import 'package:speaker_timer/screen/stopwatch/stopwatch_screen.dart';
 
 void main() => runApp(new MyApp());
