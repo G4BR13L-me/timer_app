@@ -3,13 +3,6 @@ import 'package:flutter/material.dart';
 class Sand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
-  }
-
-
-  static Widget builder (BuildContext context){
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -26,7 +19,6 @@ class Sand extends StatelessWidget {
           ),
       ],
     );
-    
   }
 
   static Widget _sand (BuildContext context, {double posX = 0, double posY = 0}) {
