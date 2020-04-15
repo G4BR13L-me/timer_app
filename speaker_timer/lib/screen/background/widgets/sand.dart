@@ -11,7 +11,7 @@ class Sand extends StatelessWidget {
   Widget build(BuildContext context) {
     double totalSum = sum(1.25, 25, 1.25);
     double interval = 1.0/totalSum;
-    int index = bottom ? totalSum.round() : 0.0;
+    int index = bottom ? totalSum.round() : 0;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -23,7 +23,7 @@ class Sand extends StatelessWidget {
             children: <Widget>[
               // controls the width of the triangle
               for (var j = 0; j < i*1.25; j++)
-                _sand(context, bottom ? interval*(--index) : interval*(++index),interval, totalSum)
+                _sand(context, bottom ? interval*index-- : interval*(++index),interval, totalSum)
             ],
           ),
       ],
@@ -51,7 +51,7 @@ class Sand extends StatelessWidget {
         child: Container(
           height: 10,
           width: 10,
-          decoration: BoxDecoration(shape: BoxShape.circle,color: Colors.amber),
+          decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xFFB66BFF)),
         ), 
         opacity: animation,
     );
