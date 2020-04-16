@@ -52,12 +52,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void disconnect() {
     AudioService.disconnect();
   }
-  //
-  // COLORS: 
-  //   - 6BB8FF blue
-  //   - F36BFF purple
-  //   - FF6B6B red
-  //
+
+  //|| COLORS: 
+  //||  - 6BB8FF -- rgb(107,184,255) 
+  //||
+  //||  - B66BFF -- rgb(182,107,255)
+  //||    A360E6 -- rgb(163,96,230)
+  //||    8850BF -- rgb(136,80,191)
+  //||
+  //||  - FFF75E -- rgb(255,247,94)
+  //||  - FFBD6B -- rgb(255,189,107)
+  //||
+  //||  - FF6B6B -- rgb(255,107,107)
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
