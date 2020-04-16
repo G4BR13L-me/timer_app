@@ -49,155 +49,145 @@ class _StopWatchState extends State<StopWatch>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).accentColor
-                ],
-                begin: FractionalOffset.topCenter,
-                end: FractionalOffset.bottomCenter,
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            /// Display stop watch time
-            Time(stopWatchTimer: _stopWatchTimer),
-            /*
-            /// Lap time.
-            Container(
-              height: 120,
-              margin: const EdgeInsets.all(8),
-              child: StreamBuilder<List<StopWatchRecord>>(
-                stream: _stopWatchTimer.records,
-                initialData: _stopWatchTimer.records.value,
-                builder: (context, snap) {
-                  final value = snap.data;
-                  if (value.isEmpty) {
-                    return Container();
-                  }
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeOut);
-                  });
-                  print('Listen records. $value');
-                  return ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (BuildContext context, int index) {
-                      final data = value[index];
-                      return Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              '${index + 1} ${data.displayTime}',
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Helvetica',
-                                  fontWeight: FontWeight.bold),
+      backgroundColor: Colors.transparent,
+      primary: false,
+          body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          /// Display stop watch time
+          Time(stopWatchTimer: _stopWatchTimer),
+          /*
+              /// Lap time.
+              Container(
+                height: 120,
+                margin: const EdgeInsets.all(8),
+                child: StreamBuilder<List<StopWatchRecord>>(
+                  stream: _stopWatchTimer.records,
+                  initialData: _stopWatchTimer.records.value,
+                  builder: (context, snap) {
+                    final value = snap.data;
+                    if (value.isEmpty) {
+                      return Container();
+                    }
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut);
+                    });
+                    print('Listen records. $value');
+                    return ListView.builder(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (BuildContext context, int index) {
+                        final data = value[index];
+                        return Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                '${index + 1} ${data.displayTime}',
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    fontFamily: 'Helvetica',
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          const Divider(
-                            height: 1,
-                          )
-                        ],
-                      );
-                    },
-                    itemCount: value.length,
-                  );
-                },
+                            const Divider(
+                              height: 1,
+                            )
+                          ],
+                        );
+                      },
+                      itemCount: value.length,
+                    );
+                  },
+                ),
               ),
-            ),
-            */
-            /// Button
-            Padding(
-              padding: const EdgeInsets.all(2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _stopWatchTimer.isRunning()
-                      ?
-                      //Pause Button
-                      ExpandAnimation(
-                          child: Button(
-                              onTap: () async {
-                                _pauseSetState();
-                              },
-                              type: 'pause'),
-                          animation: _animation)
-                      : time == 0
-                          ?
-                          //Play Button
-                          ExpandAnimation(
-                              child: Button(
-                                  onTap: () async {
-                                    _playSetState();
-                                  },
-                                  type: 'play'),
-                              animation: _animation,
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                //Play Button
-                                ExpandAnimation(
-                                    child: Button(
-                                        onTap: () async {
-                                          _playSetState();
-                                        },
-                                        type: 'play'),
-                                    animation: _animation),
+              */
+          /// Button
+          Padding(
+            padding: const EdgeInsets.all(2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _stopWatchTimer.isRunning()
+                    ?
+                    //Pause Button
+                    ExpandAnimation(
+                        child: Button(
+                            onTap: () async {
+                              _pauseSetState();
+                            },
+                            type: 'pause'),
+                        animation: _animation)
+                    : time == 0
+                        ?
+                        //Play Button
+                        ExpandAnimation(
+                            child: Button(
+                                onTap: () async {
+                                  _playSetState();
+                                },
+                                type: 'play'),
+                            animation: _animation,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              //Play Button
+                              ExpandAnimation(
+                                  child: Button(
+                                      onTap: () async {
+                                        _playSetState();
+                                      },
+                                      type: 'play'),
+                                  animation: _animation),
 
-                                //Spacing the Widgets
-                                SizedBox(
-                                  width: 25,
-                                ),
+                              //Spacing the Widgets
+                              SizedBox(
+                                width: 25,
+                              ),
 
-                                //Reset Button
-                                ExpandAnimation(
-                                    child: Button(
-                                        onTap: () async {
-                                          _resetSetState();
-                                        },
-                                        type: 'reset'),
-                                    animation: _animation),
-                              ],
-                            )
-                  /*Padding(
-                            padding: const EdgeInsets.all(0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(0),
-                                  child: RaisedButton(
-                                    padding: const EdgeInsets.all(4),
-                                    color: Colors.deepPurpleAccent,
-                                    shape: const StadiumBorder(),
-                                    onPressed: () async {
-                                      _stopWatchTimer.onExecute
-                                          .add(StopWatchExecute.lap);
-                                    },
-                                    child: Text(
-                                      'Lap',
-                                      style: TextStyle(color: Colors.white),
+                              //Reset Button
+                              ExpandAnimation(
+                                  child: Button(
+                                      onTap: () async {
+                                        _resetSetState();
+                                      },
+                                      type: 'reset'),
+                                  animation: _animation),
+                            ],
+                          )
+                /*Padding(
+                              padding: const EdgeInsets.all(0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(0),
+                                    child: RaisedButton(
+                                      padding: const EdgeInsets.all(4),
+                                      color: Colors.deepPurpleAccent,
+                                      shape: const StadiumBorder(),
+                                      onPressed: () async {
+                                        _stopWatchTimer.onExecute
+                                            .add(StopWatchExecute.lap);
+                                      },
+                                      child: Text(
+                                        'Lap',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),*/
-                ],
-              ),
+                                ],
+                              ),
+                            ),*/
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -216,8 +206,7 @@ class _StopWatchState extends State<StopWatch>
       _animationController.reset();
       pause = true;
       time = _stopWatchTimer.rawTime.value;
-      _stopWatchTimer.onExecute
-          .add(StopWatchExecute.stop);
+      _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
       _animationController.forward();
     });
   }
@@ -226,8 +215,7 @@ class _StopWatchState extends State<StopWatch>
     setState(() {
       _animationController.reset();
       time = 0;
-      _stopWatchTimer.onExecute
-          .add(StopWatchExecute.reset);
+      _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
       _animationController.forward();
     });
   }
