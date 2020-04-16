@@ -39,12 +39,13 @@ class _BackgroundState extends State<Background>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    Image img = Image.asset(
+    final Image img = Image.asset(
       MediaQuery.of(context).orientation == Orientation.landscape
           ? 'assets/hourglass_Landscape.png'
           : 'assets/hourglass.png',
-      width: 2.0 / 3.0 * size.width,
-      height: size.height * 0.8,
+      fit: BoxFit.fill,
+      //width: 2.0 / 3.0 * size.width,
+      //height: size.height * 0.8,
     );
 
     return SafeArea(
@@ -55,27 +56,34 @@ class _BackgroundState extends State<Background>
           child: Stack(
             children: <Widget>[
               CustomAppBar(),
-              //Sand(controller: controller, bottom: false,),
-              /*Transform.rotate(
-                angle: math.pi,
-                child: Sand(),
-              ),*/
+              Padding(
+                padding: EdgeInsets.only(bottom: size.height*0.062, left: size.width*0.18),
+                child: Sand(controller: controller, bottom: true,),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: size.height*0.055, left: size.width*0.18),
+                child: Transform.rotate(
+                  angle: math.pi,
+                  child: Sand(controller: controller, bottom: false,),
+                ),
+              ),
               Container(
-                height: 11.0 / 12.0 * size.height,
+                height: size.height,
                 width: size.width,
-                margin: EdgeInsets.only(
-                    left: size.width / 7.0, top: 10, bottom: 10, right: 1),
+                padding:EdgeInsets.only(left: size.width*0.2,right: 2.0,top: size.height*0.02,bottom: size.height*0.05),
                 child: img,
               ),
+              Center(child: Crystal(size.width, size.height)),
               AnimatedOpacity(
                   opacity:
                       Provider.of<PlayStatus>(context).isPlaying ? 1.0 : 0.0,
                   duration: Duration(seconds: 1),
                   child: Wave(size: Size(size.width, 50))),
-              Transform.translate(
+              /*Transform.translate(
                 child: Crystal(img.width, img.height),
                 offset: Offset(img.width/2.0, img.height/2.0),
-              ),
+              ),*/
+              //Crystal(img.width, img.height)
             ],
           )),
     );

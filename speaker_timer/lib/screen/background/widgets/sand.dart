@@ -9,7 +9,7 @@ class Sand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double totalSum = sum(1.25, 25, 1.25);
+    double totalSum = sumPA(200, 10, 200);
     double interval = 1.0/totalSum;
     int index = bottom ? totalSum.round() : 0;
 
@@ -17,12 +17,12 @@ class Sand extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         // controls the heigth of the triangle
-        for (var i = 0; i < 25; i++) 
+        for (var i = 10; i < 200; i=(i+0.5).round()) 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // controls the width of the triangle
-              for (var j = 0; j < i*1.25; j++)
+              for (var j = 0; j < i; j++)
                 _sand(context, bottom ? interval*index-- : interval*(++index),interval, totalSum)
             ],
           ),
@@ -32,6 +32,10 @@ class Sand extends StatelessWidget {
 
   double sum (double q, double n, double frist){
     return frist*(pow(q, n)-1)/(q-1);
+  }
+
+  double sumPA (double n, double frist,double last){
+    return (frist+last)*n/2.0;
   }
 
   Widget _sand (BuildContext context, double index, double interval, double sum) {
@@ -49,8 +53,8 @@ class Sand extends StatelessWidget {
 
     return FadeTransition(
         child: Container(
-          height: 10,
-          width: 10,
+          height: 1,
+          width: 1,
           decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xFFB66BFF)),
         ), 
         opacity: animation,
