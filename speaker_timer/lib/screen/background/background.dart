@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -6,9 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/background/widgets/app_bar.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
+import 'package:speaker_timer/screen/background/widgets/hourgalss_painter.dart';
 import 'package:speaker_timer/screen/background/widgets/sand.dart';
 import 'package:speaker_timer/screen/background/widgets/wave.dart';
 import 'dart:math' as math;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+
+
 
 class Background extends StatefulWidget {
   final int duration = 20;
@@ -55,37 +61,55 @@ class _BackgroundState extends State<Background>
           height: size.height,
           child: Stack(
             children: <Widget>[
-              CustomAppBar(),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height*0.062, left: size.width*0.18),
-                child: Sand(controller: controller, bottom: true,),
+              FutureBuilder(
+                future: _loadImage(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData)
+                    return FittedBox(
+                      child: SizedBox(
+                        width: snapshot.data.width.toDouble(),
+                        height: snapshot.data.height.toDouble(),
+                        child: CustomPaint(
+                          painter: HourglassPainter(snapshot.data),
+                        ),
+                      ),
+                    );
+                  else
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                },
               ),
-              Padding(
-                padding: EdgeInsets.only(top: size.height*0.055, left: size.width*0.18),
-                child: Transform.rotate(
-                  angle: math.pi,
-                  child: Sand(controller: controller, bottom: false,),
-                ),
-              ),
-              Container(
+
+              //CustomAppBar(),
+
+              // TODO: ADD SAND RECT AND DROP EFFECT
+
+              /*Container(
                 height: size.height,
                 width: size.width,
                 padding:EdgeInsets.only(left: size.width*0.2,right: 2.0,top: size.height*0.02,bottom: size.height*0.05),
                 child: img,
               ),
               Center(child: Crystal(size.width, size.height)),
-              AnimatedOpacity(
-                  opacity:
-                      Provider.of<PlayStatus>(context).isPlaying ? 1.0 : 0.0,
-                  duration: Duration(seconds: 1),
-                  child: Wave(size: Size(size.width, 50))),
+              
               /*Transform.translate(
                 child: Crystal(img.width, img.height),
                 offset: Offset(img.width/2.0, img.height/2.0),
               ),*/
-              //Crystal(img.width, img.height)
+              //Crystal(img.width, img.height)*/
             ],
           )),
     );
+  }
+
+  Future<ui.Image> _loadImage() async {
+    final byteData = await rootBundle.load('assets/hourglass.png');
+
+    final file = File('${(await getTemporaryDirectory()).path}/hourglass.png');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    final data = await file.readAsBytes();
+    return await decodeImageFromList(data);
   }
 }
