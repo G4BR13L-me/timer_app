@@ -26,7 +26,7 @@ class Crystal extends StatelessWidget {
             child: StopWatch()
           ),
         ), 
-        transform: Matrix4.translationValues(width/10.0, -height/70, 0)..rotateZ(0.8),
+        transform: Matrix4.translationValues(width/10.0, -height/70, 0)..rotateZ(math.pi/4.0),
         );
       else
       return Transform(
@@ -42,7 +42,7 @@ class Crystal extends StatelessWidget {
             child: StopWatch()
           ),*/
         ), 
-        transform: Matrix4.translationValues(width/10.0, 0, 0)..rotateZ(0.8),
+        transform: Matrix4.translationValues(width/10.0, 0, 0)..rotateZ(math.pi/4.0),
         );
   }
 }
