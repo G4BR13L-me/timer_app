@@ -14,8 +14,6 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
-
-
 class Background extends StatefulWidget {
   final int duration = 20;
 
@@ -47,12 +45,14 @@ class _BackgroundState extends State<Background>
 
     final Image img = Image.asset(
       MediaQuery.of(context).orientation == Orientation.landscape
-          ? 'assets/hourglass_Landscape.png'
+          ? 'assets/hourglass_landscape.png'
           : 'assets/hourglass.png',
       fit: BoxFit.fill,
       //width: 2.0 / 3.0 * size.width,
       //height: size.height * 0.8,
     );
+    print(size.width);
+    print(size.height);
 
     return SafeArea(
       child: Container(
@@ -61,7 +61,7 @@ class _BackgroundState extends State<Background>
           height: size.height,
           child: Stack(
             children: <Widget>[
-              FutureBuilder(
+              /*FutureBuilder(
                 future: _loadImage(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData)
@@ -70,7 +70,7 @@ class _BackgroundState extends State<Background>
                         width: snapshot.data.width.toDouble(),
                         height: snapshot.data.height.toDouble(),
                         child: CustomPaint(
-                          painter: HourglassPainter(snapshot.data),
+                          painter: HourglassPainter(snapshot.data,Offset(size.width,size.height)),
                         ),
                       ),
                     );
@@ -79,25 +79,41 @@ class _BackgroundState extends State<Background>
                       child: CircularProgressIndicator(),
                     );
                 },
-              ),
+              ),*/
 
               //CustomAppBar(),
 
               // TODO: ADD SAND RECT AND DROP EFFECT
 
-              /*Container(
+              Transform(
+                child: Center(
+                  child: SizedBox(
+                      width: size.width / 1.5,
+                      height: size.height / 2.3,
+                      child: CustomPaint(painter: Sand(-0.75, true))),
+                ),
+                transform: Matrix4.translationValues(
+                    size.width / 10.0, size.height / 4.77, 0),
+              ),
+
+              Transform(
+                child: Center(
+                  child: SizedBox(
+                      width: size.width / 1.5,
+                      height: size.height / 2.3,
+                      child: CustomPaint(painter: Sand(-0.75, false))),
+                ),
+                transform: Matrix4.translationValues(
+                    size.width / 1.3, size.height / 4.38, 0),
+              ),
+
+              Container(
                 height: size.height,
                 width: size.width,
-                padding:EdgeInsets.only(left: size.width*0.2,right: 2.0,top: size.height*0.02,bottom: size.height*0.05),
+                padding: EdgeInsets.only(left: size.width * 0.2),
                 child: img,
               ),
-              Center(child: Crystal(size.width, size.height)),
-              
-              /*Transform.translate(
-                child: Crystal(img.width, img.height),
-                offset: Offset(img.width/2.0, img.height/2.0),
-              ),*/
-              //Crystal(img.width, img.height)*/
+              //Center(child: Crystal(size.width, size.height)),
             ],
           )),
     );
@@ -107,7 +123,8 @@ class _BackgroundState extends State<Background>
     final byteData = await rootBundle.load('assets/hourglass.png');
 
     final file = File('${(await getTemporaryDirectory()).path}/hourglass.png');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
     final data = await file.readAsBytes();
     return await decodeImageFromList(data);

@@ -1,63 +1,44 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'dart:math' as math;
+import 'dart:ui';
 
-class Sand extends StatelessWidget {
-  final AnimationController controller;
+class Sand extends CustomPainter{
+  final double height;
   final bool bottom;
 
-  Sand({@required this.controller,@required this.bottom});
+  Sand(this.height,this.bottom);
+
 
   @override
-  Widget build(BuildContext context) {
-    double totalSum = sumPA(200, 10, 200);
-    double interval = 1.0/totalSum;
-    int index = bottom ? totalSum.round() : 0;
+  void paint(Canvas canvas, Size size) {
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        // controls the heigth of the triangle
-        for (var i = 10; i < 200; i=(i+0.5).round()) 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // controls the width of the triangle
-              for (var j = 0; j < i; j++)
-                _sand(context, bottom ? interval*index-- : interval*(++index),interval, totalSum)
-            ],
-          ),
-      ],
-    );
+    Size s = Size(bottom? size.width:-size.width,bottom?size.height:-size.height);
+    var path = Path();
+    var paint = Paint();
+    
+    if(height>=-0.75){
+      path.moveTo(0,s.height);
+      path.quadraticBezierTo(s.width*0.50, s.height*height, s.width, s.height);
+      path.lineTo(s.width, s.height);
+      path.lineTo(0, s.height);
+      path.close();
+      paint.color = Colors.yellow;
+      paint.maskFilter = MaskFilter.blur(BlurStyle.inner, 2.0);
+      canvas.drawPath(path, paint);
+
+    }
+    else{
+      path.moveTo(0,s.height);
+      path.lineTo(s.width, s.height);
+      path.lineTo(s.width/2.0, s.height*height*0.5);
+      path.lineTo(0, s.height);
+      path.close();
+      paint.color = Colors.amber;
+      paint.maskFilter = MaskFilter.blur(BlurStyle.inner, 5.0);
+      canvas.drawPath(path, paint);
+    }
   }
 
-  double sum (double q, double n, double frist){
-    return frist*(pow(q, n)-1)/(q-1);
-  }
-
-  double sumPA (double n, double frist,double last){
-    return (frist+last)*n/2.0;
-  }
-
-  Widget _sand (BuildContext context, double index, double interval, double sum) {
-
-    Animation<double> animation = Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(
-        CurvedAnimation(parent: controller, curve: Interval(
-            index-interval,
-            index,
-            curve: Curves.ease
-          ))
-      );
-
-    return FadeTransition(
-        child: Container(
-          height: 1,
-          width: 1,
-          decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xFFB66BFF)),
-        ), 
-        opacity: animation,
-    );
-  }
+  @override
+  bool shouldRepaint(Sand oldDelegate) => this.height != oldDelegate.height;
 }
