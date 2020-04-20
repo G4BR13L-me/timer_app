@@ -87,16 +87,16 @@ class _BackgroundState extends State<Background>
 
               Transform(
                 child: Center(
-                  child: SizedBox(
-                      width: size.width / 1.5,
-                      height: size.height / 2.3,
-                      child: CustomPaint(painter: Sand(-0.75, true))),
+                  child:SizedBox(
+                        width: size.width / 1.5,
+                        height: size.height / 2.3,
+                        child:CustomPaint(painter: Sand(0.75, true))),
                 ),
                 transform: Matrix4.translationValues(
                     size.width / 10.0, size.height / 4.77, 0),
               ),
 
-              Transform(
+              /*Transform(
                 child: Center(
                   child: SizedBox(
                       width: size.width / 1.5,
@@ -105,7 +105,7 @@ class _BackgroundState extends State<Background>
                 ),
                 transform: Matrix4.translationValues(
                     size.width / 1.3, size.height / 4.38, 0),
-              ),
+              ),*/
 
               Container(
                 height: size.height,
