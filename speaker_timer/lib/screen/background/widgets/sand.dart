@@ -17,55 +17,45 @@ class Sand extends CustomPainter {
     var path = Path();
     var paint = Paint();
     var r = Random();
-    paint.color = Colors.amber;
+    paint.color = Colors.yellow;
+    
     paint.strokeWidth = 1.5;
     //paint.maskFilter = MaskFilter.blur(BlurStyle.solid,0.8);
 
     if (height >= -0.75) {
-
       path.moveTo(0, s.height);
       path.quadraticBezierTo(
           s.width * 0.50, s.height * height, s.width, s.height);
       path.lineTo(s.width, s.height);
       path.lineTo(0, s.height);
       path.close();
+      canvas.drawPath(path, paint);
       canvas.clipPath(path);
-      //paint.color = Colors.amber;
-      //paint.colorFilter = const ColorFilter.srgbToLinearGamma();
-     // canvas.drawPath(path, paint);
-      for (var i = 0; i < s.width; i+=2) {
-      for (var j = 0; j < s.height; j+=2) {
-        var point = Offset(r.nextDouble()*s.width, r.nextDouble()*s.height);
-        canvas.drawPoints(PointMode.points, [point], paint);
-        
-      }
-      
-    }
-      //List<Offset> points = List<Offset>();
-      /*Offset start = bound.bottomLeft;
-      Offset current = start;
-      while (true) {
-        while (true) {
-          if (!bound.contains(current)) {
-            current.translate(0, -(current.dy - start.dy));
-            break;
-          }
-          paint.color = Colors.amber;
-          canvas.drawPoints(PointMode.points, [current], paint);
-          current = current.translate(0, 5);
+      paint.color = Colors.amber;
+      List<Offset> points = List<Offset>();
+      for (var i = 0; i < size.width; i+=2) {
+        for (var j = 0; j < size.height; j+=2) {
+          points.add(Offset(r.nextDouble()*s.width, r.nextDouble()*s.height));
         }
-        if (!bound.contains(current)) break;
-        current = current.translate(5, 0);
-      }*/
+      }
+      canvas.drawPoints(PointMode.points, points, paint);
     } else {
       path.moveTo(0, s.height);
       path.lineTo(s.width, s.height);
       path.lineTo(s.width / 2.0, s.height * height * 0.5);
       path.lineTo(0, s.height);
       path.close();
-      paint.color = Colors.amber;
-      paint.maskFilter = MaskFilter.blur(BlurStyle.inner, 5.0);
       canvas.drawPath(path, paint);
+      canvas.clipPath(path);
+
+      paint.color = Colors.amber;
+      List<Offset> points = List<Offset>();
+      for (var i = 0; i < size.width; i+=2) {
+        for (var j = 0; j < size.height; j+=2) {
+          points.add(Offset(r.nextDouble()*s.width, r.nextDouble()*s.height));
+        }
+      }
+      canvas.drawPoints(PointMode.points, points, paint);
     }
   }
 
