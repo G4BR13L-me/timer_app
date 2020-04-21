@@ -4,8 +4,7 @@ import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/background/widgets/app_bar.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/background/widgets/sand.dart';
-import 'package:speaker_timer/screen/background/widgets/wave.dart';
-import 'dart:math' as math;
+import 'package:speaker_timer/screen/background/widgets/sand_fall.dart';
 
 class Background extends StatefulWidget {
   final int duration = 20;
@@ -25,9 +24,9 @@ class _BackgroundState extends State<Background>
     super.initState();
     controller = AnimationController(
         vsync: this, duration: Duration(seconds: widget.duration));
-    topSandAnimation = Tween<double>(begin: -0.8, end: 1.0).animate(controller);
+    topSandAnimation = Tween<double>(begin: -0.9, end: 1.0).animate(controller);
     bottomSandAnimation =
-        Tween<double>(begin: 1.0, end: -0.8).animate(controller);
+        Tween<double>(begin: 1.0, end: -0.9).animate(controller);
     controller.forward();
   }
 
@@ -54,54 +53,81 @@ class _BackgroundState extends State<Background>
       builder: (context, player, child) {
         if (player.isPlaying) {
           controller.repeat();
+        } else if (player.reset) {
+          controller.reset();
         } else {
           controller.stop();
         }
         return SafeArea(
-        child: Container(
-            color: Colors.white,
-            width: size.width,
-            height: size.height,
-            child: Stack(
-              children: <Widget>[
-                //CustomAppBar(),
+          child: Container(
+              color: Colors.white,
+              width: size.width,
+              height: size.height,
+              child: Stack(
+                children: <Widget>[
+                  //CustomAppBar(),
 
-                // TODO: ADD SAND RECT AND DROP EFFECT
+                  // TODO: ADD SAND RECT AND DROP EFFECT
 
-                Transform(
-                  child: Center(
-                    child: SizedBox(
-                        width: size.width / 1.5,
-                        height: size.height / 2.3,
-                        child: CustomPaint(
-                            painter: Sand(bottomSandAnimation.value, true))),
+                  AnimatedBuilder(
+                    animation: bottomSandAnimation,
+                    builder: (BuildContext context, Widget child) {
+                      return Transform(
+                        transform: Matrix4.translationValues(
+                            size.width / 10.0, size.height / 4.77, 0),
+                        child: Center(
+                          child: SizedBox(
+                            width: size.width / 1.5,
+                            height: size.height / 2.3,
+                            child: ClipPath(
+                              clipper: Sand(bottomSandAnimation.value, true),
+                              child: Image.asset(
+                                'assets/sand.png',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  transform: Matrix4.translationValues(
-                      size.width / 10.0, size.height / 4.77, 0),
-                ),
 
-                Transform(
-                  child: Center(
-                    child: SizedBox(
-                        width: size.width / 1.5,
-                        height: size.height / 2.3,
-                        child: CustomPaint(
-                            painter: Sand(topSandAnimation.value, false))),
+                  AnimatedBuilder(
+                    animation: bottomSandAnimation,
+                    builder: (BuildContext context, Widget child) {
+                      return RotatedBox(
+                        quarterTurns: 2,
+                        child: Transform(
+                          transform: Matrix4.translationValues(
+                              -size.width / 10.0, size.height / 4.77, 0),
+                          child: Center(
+                            child: SizedBox(
+                              width: size.width / 1.5,
+                              height: size.height / 2.3,
+                              child: ClipPath(
+                                clipper: Sand(topSandAnimation.value, false),
+                                child: Image.asset(
+                                  'assets/sand.png',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  transform: Matrix4.translationValues(
-                      size.width / 1.3, size.height / 4.38, 0),
-                ),
 
-                Container(
-                  height: size.height,
-                  width: size.width,
-                  padding: EdgeInsets.only(left: size.width * 0.2),
-                  child: img,
-                ),
-                Center(child: Crystal(size.width, size.height,player)),
-              ],
-            )),
-      );
+                  Container(
+                    height: size.height,
+                    width: size.width,
+                    padding: EdgeInsets.only(left: size.width * 0.2),
+                    child: img,
+                  ),
+                  Center(child: Crystal(size.width, size.height, player)),
+                ],
+              )),
+        );
       },
     );
   }
