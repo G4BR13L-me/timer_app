@@ -120,6 +120,7 @@ class _StopWatchNewState extends State<StopWatch>
   void _playSetState(PlayStatus playStatus) {
     _animationController.reset();
     playStatus.isPlaying = true;
+    playStatus.reset = false;
     _stopWatchNewTimer.onExecute.add(StopWatchExecute.start);
     _animationController.forward();
   }
@@ -136,6 +137,7 @@ class _StopWatchNewState extends State<StopWatch>
     _animationController.reset();
     time = 0;
     playStatus.isPlaying = false;
+    playStatus.reset = true;
     _stopWatchNewTimer.onExecute.add(StopWatchExecute.reset);
     _animationController.forward();
   }
