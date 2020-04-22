@@ -9,7 +9,7 @@ class ExpandAnimation extends StatelessWidget {
   final bool fixWidth;
 
   ExpandAnimation({@required this.child, @required this.animation, 
-                  this.height=100, this.width=100, 
+                  this.height=30, this.width=30, 
                   this.fixHeight = false, this.fixWidth = false});
 
   @override

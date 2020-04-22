@@ -93,7 +93,7 @@ class _BackgroundState extends State<Background>
                   ),
 
                   AnimatedBuilder(
-                    animation: bottomSandAnimation,
+                    animation: topSandAnimation,
                     builder: (BuildContext context, Widget child) {
                       return RotatedBox(
                         quarterTurns: 2,
