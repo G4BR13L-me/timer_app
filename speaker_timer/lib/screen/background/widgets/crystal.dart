@@ -12,8 +12,6 @@ class Crystal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(width);
-    print(height);
     if(width>height)
     return Transform(
       origin: Offset(width/8.0,width/8.0),

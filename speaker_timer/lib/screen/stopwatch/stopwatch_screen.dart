@@ -5,7 +5,6 @@ import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/controller/text_player.dart';
 import 'package:speaker_timer/animations/expand_animation.dart';
 import 'package:speaker_timer/screen/stopwatch/widgets/button.dart';
-import 'package:speaker_timer/screen/stopwatch/widgets/show_time.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class StopWatch extends StatefulWidget {
@@ -26,12 +25,12 @@ class _StopWatchNewState extends State<StopWatch>
   @override
   void initState() {
     super.initState();
-    _stopWatchNewTimer.rawTime.listen((value) =>
-        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
 
-    _animation = Tween<double>(begin: 0, end: 30).animate(_animationController);
+    _animation = Tween<double>(begin: 0, end: 30).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack)
+    );
 
     _animationController.forward();
   }
@@ -42,39 +41,55 @@ class _StopWatchNewState extends State<StopWatch>
     _animationController.dispose();
     super.dispose();
   }
+
   var time = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      primary: false,
+      //primary: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           /// Display stop watch time
-          Time(stopWatchTimer: _stopWatchNewTimer),
+          StreamBuilder(
+              initialData: 0,
+              stream: _stopWatchNewTimer.rawTime,
+              builder: (context, snapshot) {
+                return Text(
+                  StopWatchTimer.getDisplayTime(snapshot.data),
+                  style: TextStyle(color: Color(0xFFFFBD6B), fontSize: 45.0),
+                );
+              }),
+          SizedBox(
+            height: 20.0,
+          ),
 
           /// Button
-          Padding(
-            padding: const EdgeInsets.all(2),
-            child: Row(
+          Stack(
+            children: <Widget>[
+              Opacity(
+                opacity: 0,
+                child: SizedBox(height: 40,),
+              ),
+              Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                _stopWatchNewTimer.isRunning()
-                    ?
+                _stopWatchNewTimer.isRunning()?
                     //Pause Button
                     ExpandAnimation(
+                      fixWidth: true,
                         child: Button(
                             onTap: () async {
                               _pauseSetState(widget.player);
                             },
                             type: 'pause'),
                         animation: _animation)
-                    : time == 0
-                        ?
+                    : time == 0 ?
                         //Play Button
                         ExpandAnimation(
+                            fixHeight: true,
                             child: Button(
                                 onTap: () async {
                                   _playSetState(widget.player);
@@ -87,6 +102,7 @@ class _StopWatchNewState extends State<StopWatch>
                             children: <Widget>[
                               //Play Button
                               ExpandAnimation(
+                                fixHeight: true,
                                   child: Button(
                                       onTap: () async {
                                         _playSetState(widget.player);
@@ -96,11 +112,12 @@ class _StopWatchNewState extends State<StopWatch>
 
                               //Spacing the Widgets
                               SizedBox(
-                                width: 25,
+                                width: 45,
                               ),
 
                               //Reset Button
                               ExpandAnimation(
+                                fixHeight: true,
                                   child: Button(
                                       onTap: () async {
                                         _resetSetState(widget.player);
@@ -111,6 +128,7 @@ class _StopWatchNewState extends State<StopWatch>
                           )
               ],
             ),
+            ],
           ),
         ],
       ),
