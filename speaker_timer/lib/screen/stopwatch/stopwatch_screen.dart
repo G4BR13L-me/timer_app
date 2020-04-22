@@ -25,8 +25,6 @@ class _StopWatchNewState extends State<StopWatch>
   @override
   void initState() {
     super.initState();
-    _stopWatchNewTimer.rawTime.listen((value) =>
-        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 600));
 

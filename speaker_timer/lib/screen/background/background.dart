@@ -16,6 +16,8 @@ class Background extends StatefulWidget {
 class _BackgroundState extends State<Background>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
+  Animation<double> heightSandTranslation;
+  Animation<double> heightSandAnimation;
   Animation<double> topSandAnimation;
   Animation<double> bottomSandAnimation;
 
@@ -24,10 +26,17 @@ class _BackgroundState extends State<Background>
     super.initState();
     controller = AnimationController(
         vsync: this, duration: Duration(seconds: widget.duration));
-    topSandAnimation = Tween<double>(begin: -0.9, end: 1.0).animate(controller);
+    heightSandAnimation = Tween<double>(begin: 1.0, end:0.25).animate(controller);
+    heightSandTranslation = Tween<double>(begin: -0.4, end:-1.2).animate(controller);
     bottomSandAnimation =
         Tween<double>(begin: 1.0, end: -0.9).animate(controller);
     controller.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    topSandAnimation = Tween<double>(begin: 0, end:MediaQuery.of(context).size.width/6.0).animate(controller);
   }
 
   @override
@@ -99,13 +108,13 @@ class _BackgroundState extends State<Background>
                         quarterTurns: 2,
                         child: Transform(
                           transform: Matrix4.translationValues(
-                              -size.width / 10.0, size.height / 4.77, 0),
+                              -size.width / 10.0, size.height / 4.77*heightSandAnimation.value, 0),
                           child: Center(
                             child: SizedBox(
                               width: size.width / 1.5,
-                              height: size.height / 2.3,
+                              height: size.height / 2.3*heightSandAnimation.value,
                               child: ClipPath(
-                                clipper: Sand(topSandAnimation.value, false),
+                                clipper: Sand(heightSandTranslation.value, false,width: topSandAnimation.value),
                                 child: Image.asset(
                                   'assets/sand.png',
                                   fit: BoxFit.fill,

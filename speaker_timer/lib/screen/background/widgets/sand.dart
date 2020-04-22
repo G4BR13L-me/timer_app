@@ -5,9 +5,10 @@ import 'dart:ui';
 
 class Sand extends CustomClipper<Path> {
   final double height;
+  final double width;
   final bool bottom;
 
-  Sand(this.height, this.bottom);
+  Sand(this.height, this.bottom,{this.width});
 
   @override
   getClip(Size size) {
@@ -15,7 +16,7 @@ class Sand extends CustomClipper<Path> {
 
 
     if(bottom){
-      if (height >= -0.85) {
+      if (height >= -0.8) {
         path.moveTo(0, size.height);
         path.quadraticBezierTo(
             size.width * 0.50, size.height * height, size.width, size.height);
@@ -29,9 +30,9 @@ class Sand extends CustomClipper<Path> {
         path.close();
       }
     }else{
-      path.moveTo(0, size.height);
-      path.lineTo(size.width, size.height);
-      path.lineTo(size.width / 2.0, size.height * height * 0.5);
+      path.moveTo(width, size.height);
+      path.lineTo(size.width-width, size.height);
+      path.lineTo(size.width / 2.0, size.height *height);
       path.close();
     }
 
