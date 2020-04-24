@@ -26,17 +26,36 @@ class _BackgroundState extends State<Background>
     super.initState();
     controller = AnimationController(
         vsync: this, duration: Duration(seconds: widget.duration));
-    heightSandAnimation = Tween<double>(begin: 1.0, end:0.25).animate(controller);
-    heightSandTranslation = Tween<double>(begin: -0.4, end:-1.2).animate(controller);
-    bottomSandAnimation =
-        Tween<double>(begin: 1.0, end: -0.9).animate(controller);
+    heightSandAnimation = Tween<double>(begin: 1.0, end:0.25).animate(
+      CurvedAnimation(
+        parent: controller, 
+        curve: Curves.easeInQuad
+      )
+    );
+    heightSandTranslation = Tween<double>(begin: -0.4, end:-1.2).animate(
+      CurvedAnimation(
+        parent: controller, 
+        curve: Curves.easeInQuad
+      )
+    );
+    bottomSandAnimation =Tween<double>(begin: 1.0, end: -1.8).animate(
+      CurvedAnimation(
+        parent: controller, 
+        curve: Curves.easeInCirc
+      )
+    );
     controller.forward();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    topSandAnimation = Tween<double>(begin: 0, end:MediaQuery.of(context).size.width/6.0).animate(controller);
+    topSandAnimation = Tween<double>(begin: 0, end:MediaQuery.of(context).size.width/6.0).animate(
+      CurvedAnimation(
+        parent: controller, 
+        curve: Curves.easeInQuad
+      )
+    );
   }
 
   @override
@@ -69,7 +88,7 @@ class _BackgroundState extends State<Background>
         }
         return SafeArea(
           child: Container(
-              color: Colors.white,
+              color: Color(0xFFEAE9EA),
               width: size.width,
               height: size.height,
               child: Stack(
@@ -89,9 +108,9 @@ class _BackgroundState extends State<Background>
                             width: size.width / 1.5,
                             height: size.height / 2.3,
                             child: ClipPath(
-                              clipper: Sand(bottomSandAnimation.value, true),
+                              clipper: Sand(bottomSandAnimation.value, true, width: topSandAnimation.value),
                               child: Image.asset(
-                                'assets/sand.png',
+                                'assets/sand_bottom.png',
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -116,7 +135,7 @@ class _BackgroundState extends State<Background>
                               child: ClipPath(
                                 clipper: Sand(heightSandTranslation.value, false,width: topSandAnimation.value),
                                 child: Image.asset(
-                                  'assets/sand.png',
+                                  'assets/sand_top.png',
                                   fit: BoxFit.fill,
                                 ),
                               ),

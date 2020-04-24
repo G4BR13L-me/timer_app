@@ -13,7 +13,7 @@ class Button extends StatelessWidget {
       child: Image.asset(
         type == 'play'? 'assets/play.png' : 
         type == 'pause'?'assets/pause.png' :
-        'assets/circle.png'  ,
+        'assets/reload.png'  ,
         fit: BoxFit.fill),
     );
   }

@@ -20,7 +20,7 @@ class Crystal extends StatelessWidget {
           height: width / 4,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
-              color: Color(0xFFB66BFF)),
+              color: Color(0xFFDF9595)),
           child: Transform.rotate(
             angle: -0.8,
             child: StopWatch(player)
@@ -36,7 +36,7 @@ class Crystal extends StatelessWidget {
           height: height / 3.5,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
-              color: Color(0xFFB66BFF)),
+              color: Color(0xFFDF9595)),
           child: Transform.rotate(
             angle: -0.8,
             child: StopWatch(player)

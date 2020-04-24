@@ -59,7 +59,7 @@ class _StopWatchNewState extends State<StopWatch>
               builder: (context, snapshot) {
                 return Text(
                   StopWatchTimer.getDisplayTime(snapshot.data),
-                  style: TextStyle(color: Color(0xFFFFBD6B), fontSize: 45.0),
+                  style: TextStyle(color: Color(0xFFEAE9EA), fontSize: 45.0),
                 );
               }),
           SizedBox(

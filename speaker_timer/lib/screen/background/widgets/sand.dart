@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -16,18 +14,31 @@ class Sand extends CustomClipper<Path> {
 
 
     if(bottom){
-      if (height >= -0.8) {
+      if (height >= -0.55) {
         path.moveTo(0, size.height);
         path.quadraticBezierTo(
             size.width * 0.50, size.height * height, size.width, size.height);
-        path.lineTo(size.width, size.height);
-        path.lineTo(0, size.height);
         path.close();
       } else {
         path.moveTo(0, size.height);
-        path.lineTo(size.width, size.height);
-        path.lineTo(size.width / 2.0, size.height * height * 0.5);
+        path.quadraticBezierTo(
+            size.width * 0.50, size.height * -0.55, size.width, size.height);
         path.close();
+        var path2 = Path();
+        path2.moveTo(size.width/8.5, size.height/1.5);
+        path2.quadraticBezierTo(
+            size.width * 0.50, size.height * (height/2.6)/* *exp func */, 7.5*size.width/8.5, size.height/1.5);
+        path2.close();
+
+        //path2.addPolygon([Offset(0,size.height),Offset(size.width,size.height),
+        //Offset(width,size.height*height ),Offset(size.width - width,size.height*height)], false);
+        path = Path.combine(PathOperation.union, path, path2);
+        
+        
+        /*path.moveTo(0, size.height);
+        path.lineTo(size.width, size.height);
+        path.lineTo(size.width / 2.0, size.height * height * 0.48);
+        path.close();*/
       }
     }else{
       path.moveTo(width, size.height);
@@ -41,41 +52,4 @@ class Sand extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper oldClipper) => true;
-
-  /*
-  @override
-  void paint(Canvas canvas, Size s) {
-    var path = Path();
-    var paint = Paint();
-    paint.color = Colors.yellow;
-
-    if(bottom){
-      if (height >= -0.85) {
-        path.moveTo(0, s.height);
-        path.quadraticBezierTo(
-            s.width * 0.50, s.height * height, s.width, s.height);
-        path.lineTo(s.width, s.height);
-        path.lineTo(0, s.height);
-        path.close();
-        canvas.drawPath(path, paint);
-      } else {
-        path.moveTo(0, s.height);
-        path.lineTo(s.width, s.height);
-        path.lineTo(s.width / 2.0, s.height * height * 0.5);
-        path.close();
-        canvas.drawPath(path, paint);
-      }
-    }else{
-      Size s = Size(-s.width,-s.height);
-      path.moveTo(0, s.height);
-      path.lineTo(s.width, s.height);
-      path.lineTo(s.width / 2.0, s.height *-0.4);
-
-      path.close();
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(Sand oldDelegate) => false;*/
 }
