@@ -14,7 +14,7 @@ class Sand extends CustomClipper<Path> {
 
 
     if(bottom){
-      if (height >= -0.55) {
+      if (height >= -0.6) {
         path.moveTo(0, size.height);
         path.quadraticBezierTo(
             size.width * 0.50, size.height * height, size.width, size.height);
@@ -22,12 +22,12 @@ class Sand extends CustomClipper<Path> {
       } else {
         path.moveTo(0, size.height);
         path.quadraticBezierTo(
-            size.width * 0.50, size.height * -0.55, size.width, size.height);
+            size.width * 0.50, size.height * -0.6, size.width, size.height);
         path.close();
         var path2 = Path();
         path2.moveTo(size.width/8.5, size.height/1.5);
         path2.quadraticBezierTo(
-            size.width * 0.50, size.height * (height/2.6)/* *exp func */, 7.5*size.width/8.5, size.height/1.5);
+            size.width * 0.50, size.height * (height/2.6)*width, 7.5*size.width/8.5, size.height/1.5);
         path2.close();
 
         //path2.addPolygon([Offset(0,size.height),Offset(size.width,size.height),
