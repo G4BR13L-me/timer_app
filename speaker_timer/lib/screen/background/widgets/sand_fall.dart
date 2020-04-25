@@ -3,36 +3,27 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 class SandFall extends CustomPainter {
-  final bool bottom;
 
-  SandFall(this.bottom);
+  List<Offset> path = List<Offset>();
+  Random r = Random();
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Size s = Size(
-        bottom ? size.width : -size.width, bottom ? size.height : -size.height);
-    var r = Random();
-    var path = Path();
-    var paint = Paint()
-    ..color = Colors.amber
-    ..strokeWidth = 1.5;
+    if(path.isEmpty) _initPoints();
+    var paint = Paint();
 
-    path.lineTo(s.width, 0);
-    path.lineTo(0, s.height);
-    path.moveTo(s.width, 0);
-    path.lineTo(s.width, s.height);
-    path.close();
-
-    canvas.clipPath(path);
-
-    for (var i = 0; i < size.width; i+=2) {
-      for (var j = 0; j < size.height; j+=2) {
-        var point = Offset(r.nextDouble()*s.width,r.nextDouble()*s.height);
-        canvas.drawPoints(PointMode.points, [point], paint);
-      }
+    for (var i = 5.0; i < size.height; i+=10) {
+      canvas.drawCircle(Offset(size.width/2.0, i), r.nextDouble()*5 , paint);
     }
+
+
+
   }
 
   @override
   bool shouldRepaint(SandFall oldDelegate) => true;
+
+  void _initPoints() {
+
+  }
 }

@@ -20,6 +20,7 @@ class _BackgroundState extends State<Background>
   Animation<double> heightSandAnimation;
   Animation<double> topSandAnimation;
   Animation<double> bottomSandAnimation;
+  Animation<double> widthSandAnimation;
 
   @override
   void initState() {
@@ -29,19 +30,25 @@ class _BackgroundState extends State<Background>
     heightSandAnimation = Tween<double>(begin: 1.0, end:0.25).animate(
       CurvedAnimation(
         parent: controller, 
-        curve: Curves.easeInQuad
+        curve: Curves.easeIn
       )
     );
     heightSandTranslation = Tween<double>(begin: -0.4, end:-1.2).animate(
       CurvedAnimation(
         parent: controller, 
-        curve: Curves.easeInQuad
+        curve: Curves.easeIn
       )
     );
-    bottomSandAnimation =Tween<double>(begin: 1.0, end: -1.8).animate(
+    bottomSandAnimation =Tween<double>(begin: 1.0, end: -0.8).animate(
       CurvedAnimation(
         parent: controller, 
-        curve: Curves.easeInCirc
+        curve: Curves.easeIn
+      )
+    );
+    widthSandAnimation =Tween<double>(begin: 0.4, end: 2.0).animate(
+      CurvedAnimation(
+        parent: controller, 
+        curve: Interval(0.9, 1.0, curve: Curves.easeOut)
       )
     );
     controller.forward();
@@ -53,7 +60,7 @@ class _BackgroundState extends State<Background>
     topSandAnimation = Tween<double>(begin: 0, end:MediaQuery.of(context).size.width/6.0).animate(
       CurvedAnimation(
         parent: controller, 
-        curve: Curves.easeInQuad
+        curve: Curves.easeIn
       )
     );
   }
@@ -108,7 +115,7 @@ class _BackgroundState extends State<Background>
                             width: size.width / 1.5,
                             height: size.height / 2.3,
                             child: ClipPath(
-                              clipper: Sand(bottomSandAnimation.value, true, width: topSandAnimation.value),
+                              clipper: Sand(bottomSandAnimation.value, true, width: widthSandAnimation.value),
                               child: Image.asset(
                                 'assets/sand_bottom.png',
                                 fit: BoxFit.fill,
