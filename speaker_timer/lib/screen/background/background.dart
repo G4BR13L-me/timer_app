@@ -101,9 +101,20 @@ class _BackgroundState extends State<Background>
               child: Stack(
                 children: <Widget>[
                   //CustomAppBar(),
-
-                  // TODO: ADD SAND RECT AND DROP EFFECT
-
+                  AnimatedBuilder(
+                    animation: controller, 
+                    builder: (_,child){
+                      return SizedBox(
+                        width: 50,
+                        height: size.height/5.0,
+                        child: CustomPaint(
+                          painter: SandFall(controller.value),
+                        ),
+                      );
+                    }
+                  ),
+                  // TODO: DROP EFFECT
+                  
                   AnimatedBuilder(
                     animation: bottomSandAnimation,
                     builder: (BuildContext context, Widget child) {
@@ -152,6 +163,8 @@ class _BackgroundState extends State<Background>
                       );
                     },
                   ),
+
+
 
                   Container(
                     height: size.height,
