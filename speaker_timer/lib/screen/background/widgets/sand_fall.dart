@@ -2,18 +2,22 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:fast_noise/fast_noise.dart' as noise;
+import 'package:speaker_timer/controller/status.dart';
 
 class SandFall extends CustomPainter {
   static List<double> path = [];
-  Random r = Random();
-  double num;
-  SandFall(this.num);
+  final Random r = Random();
+  final PlayStatus playStatus;
+  SandFall(this.playStatus);
 
   @override
   void paint(Canvas canvas, Size size) {
-    if(num==0){ _initPoints(size.height); print('Initialize');}
-    else {_switchPosition();print('Switch');}
-    var paint = Paint();
+    if(playStatus.reset) { _initPoints(size.height);}
+    else if(playStatus.isPlaying) {_switchPosition();_increaseSandDrop();}
+    else {_switchPosition(); _cleanDrop();}
+
+    var paint = Paint()
+    ..color = Color(0xFFDF9595);
     var index = 0; 
 
     for (var i = 5.0; i < size.height; i+=10) {
@@ -23,6 +27,14 @@ class SandFall extends CustomPainter {
 
   @override
   bool shouldRepaint(SandFall oldDelegate) => true;
+
+  _cleanDrop(){
+    path[0] = 0;
+  }
+
+  _increaseSandDrop(){
+    path[0] = r.nextDouble()*5;
+  }
 
   _switchPosition(){
     var aux = path.sublist(0);
@@ -34,7 +46,7 @@ class SandFall extends CustomPainter {
 
   _initPoints(double size){
     for (var i = 5.0; i < size; i+=10) {
-      path.add(r.nextDouble()*5);
+      path.add(0);
     }
   }
 }

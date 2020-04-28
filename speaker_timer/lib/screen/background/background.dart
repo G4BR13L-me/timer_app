@@ -7,6 +7,7 @@ import 'package:speaker_timer/screen/background/widgets/sand.dart';
 import 'package:speaker_timer/screen/background/widgets/sand_fall.dart';
 
 class Background extends StatefulWidget {
+  //The Clock's duration
   final int duration = 20;
 
   @override
@@ -101,20 +102,29 @@ class _BackgroundState extends State<Background>
               child: Stack(
                 children: <Widget>[
                   //CustomAppBar(),
-                  AnimatedBuilder(
-                    animation: controller, 
-                    builder: (_,child){
-                      return SizedBox(
-                        width: 50,
-                        height: size.height/5.0,
-                        child: CustomPaint(
-                          painter: SandFall(controller.value),
-                        ),
-                      );
-                    }
+
+                  // Positioned and Transform are two different ways to move
+                  // any widget. However, Positioned is specific for a Stack case. 
+                  // Here I'm using both just for the sake of learning 
+                  Positioned(
+                    top: 450,
+                    left: 191,
+                    //Animates the SandFall effect 
+                    child: AnimatedBuilder(
+                      animation: controller, 
+                      builder: (_,child){
+                        return SizedBox(
+                          width: 50,
+                          height: size.height/3.8,
+                          child: CustomPaint(
+                            painter: SandFall(player),
+                          ),
+                        );
+                      }
+                    ),
                   ),
-                  // TODO: DROP EFFECT
                   
+                  //Animates the bottom Sand part of the Hourglass
                   AnimatedBuilder(
                     animation: bottomSandAnimation,
                     builder: (BuildContext context, Widget child) {
@@ -138,6 +148,7 @@ class _BackgroundState extends State<Background>
                     },
                   ),
 
+                  //Animates the top Sand part of the Hourglass
                   AnimatedBuilder(
                     animation: topSandAnimation,
                     builder: (BuildContext context, Widget child) {
@@ -163,15 +174,16 @@ class _BackgroundState extends State<Background>
                       );
                     },
                   ),
-
-
-
+                  
+                  //Display the Hourglass image 
                   Container(
                     height: size.height,
                     width: size.width,
                     padding: EdgeInsets.only(left: size.width * 0.2),
                     child: img,
                   ),
+                  
+                  //The middle part of the Hourglass
                   Center(child: Crystal(size.width, size.height, player)),
                 ],
               )),
