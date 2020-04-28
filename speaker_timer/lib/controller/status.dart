@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class PlayStatus with ChangeNotifier {
   bool _isPlaying = false;
-  bool _reset = false;
+  bool _reset = true;
 
   bool get isPlaying => _isPlaying;
   set isPlaying(bool value) {
