@@ -5,23 +5,42 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width*1.0/4.0,
+      width: MediaQuery.of(context).size.width/6.0,
       alignment: Alignment.centerLeft,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
+        color: Color(0xFFEAE9EA),
+        boxShadow: [BoxShadow(
+          color: Colors.black54,
+        )]
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          GestureDetector(
-            child: Icon(Icons.home),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: GestureDetector(
+              child: Image.asset('assets/hourglass_icon.png',fit: BoxFit.fill,),
+            ),
           ),
-          GestureDetector(
-            child: Icon(Icons.home),
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: GestureDetector(
+              child: Icon(Icons.timer),
+            ),
           ),
-          GestureDetector(
-            child: Icon(Icons.home),
+          Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: GestureDetector(
+              child: Icon(Icons.alarm),
+            ),
           ),
-          GestureDetector(
-            child: Icon(Icons.home),
+          Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: GestureDetector(
+              child: Icon(Icons.hourglass_empty),
+            ),
           ),
         ],
       ),

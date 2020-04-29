@@ -19,7 +19,7 @@ class Crystal extends StatelessWidget {
           width: width / 4 ,
           height: width / 4,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(12),
               color: Color(0xFFDF9595),),
           child: Transform.rotate(
             angle: -0.8,
@@ -35,7 +35,7 @@ class Crystal extends StatelessWidget {
           width: height / 3.5,
           height: height / 3.5,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(12),
               color: Color(0xFFDF9595),
               boxShadow: [BoxShadow(
                 blurRadius: 2.0,

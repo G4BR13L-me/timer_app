@@ -101,7 +101,7 @@ class _BackgroundState extends State<Background>
               height: size.height,
               child: Stack(
                 children: <Widget>[
-                  //CustomAppBar(),
+                  CustomAppBar(),
 
                   // Positioned and Transform are two different ways to move
                   // any widget. However, Positioned is specific for a Stack case. 
