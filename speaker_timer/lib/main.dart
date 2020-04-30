@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/status.dart';
+import 'package:speaker_timer/screen/app_pageview.dart';
 import 'package:speaker_timer/screen/background/background.dart';
 
 void main() => runApp(new MyApp());
@@ -64,7 +65,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         child: MaterialApp(
-          home: Background(),
+          home: AppPageView(),
           theme: ThemeData(
             primaryColor: Color(0xFF6BB8FF),
             accentColor: Color(0xFFFF6B6B)
