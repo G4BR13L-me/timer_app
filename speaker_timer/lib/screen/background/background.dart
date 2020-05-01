@@ -57,9 +57,11 @@ class _BackgroundState extends State<Background>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    print(size.height);
+    print(size.width);
 
     final Image img = Image.asset(
-      MediaQuery.of(context).orientation == Orientation.landscape
+      size.width > size.height
           ? 'assets/hourglass_landscape.png'
           : 'assets/hourglass.png',
       fit: BoxFit.fill,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ExpandAnimation extends StatelessWidget {
+class ExpandAnimation extends StatefulWidget {
   final Widget child;
   final Animation<double> animation;
   final double height;
@@ -13,18 +13,23 @@ class ExpandAnimation extends StatelessWidget {
                   this.fixHeight = false, this.fixWidth = false});
 
   @override
+  _ExpandAnimationState createState() => _ExpandAnimationState();
+}
+
+class _ExpandAnimationState extends State<ExpandAnimation> {
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: animation,
+        animation: widget.animation,
         builder: (context, child) {
           return Container(
-            height: fixHeight ? height : animation.value,
-            width: fixWidth ? width : animation.value,
+            height: widget.fixHeight ? widget.height : widget.animation.value,
+            width: widget.fixWidth ? widget.width : widget.animation.value,
             child: child,
             padding: EdgeInsets.zero,
           );
         },
-        child: child
+        child: widget.child
     );
   }
 }

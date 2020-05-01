@@ -31,7 +31,7 @@ class _CustomAppBarState extends State<CustomAppBar>
   void didChangeDependencies() {
     super.didChangeDependencies();
     scrollAnimation = Tween<double>(
-            begin: MediaQuery.of(context).size.width / 5.0,
+            begin: MediaQuery.of(context).size.width / 5.5,
             end: MediaQuery.of(context).size.width / 2.0)
         .animate(CurvedAnimation(
             parent: controller,
@@ -53,18 +53,21 @@ class _CustomAppBarState extends State<CustomAppBar>
         return Container(
           height: MediaQuery.of(context).size.height,
           width: scrollAnimation.value,
-          alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
               color: Color(0xFFEAE9EA),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: controller.isDismissed ? 0 : 300)
+                    color: Colors.black54,
+                    spreadRadius: controller.isDismissed
+                        ? 0
+                        : MediaQuery.of(context).size.width / 1.2)
               ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: controller.isDismissed
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
@@ -93,32 +96,38 @@ class _CustomAppBarState extends State<CustomAppBar>
               ),
               Divider(),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                padding: EdgeInsets.symmetric(
+                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
                 child: GestureDetector(
                   child: Icon(Icons.timer),
-                  onTap: (){
-                    //widget.pageController.animateToPage(page, duration: null, curve: null);
+                  onTap: () {
+                    widget.pageController.animateToPage(0,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear);
                   },
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                padding: EdgeInsets.symmetric(
+                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
                 child: GestureDetector(
                   child: Icon(Icons.alarm),
-                  onTap: (){
-                    //widget.pageController.animateToPage(page, duration: null, curve: null);
+                  onTap: () {
+                    widget.pageController.animateToPage(1,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear);
                   },
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                padding: EdgeInsets.symmetric(
+                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
                 child: GestureDetector(
                   child: Icon(Icons.hourglass_empty),
-                  onTap: (){
-                    //widget.pageController.animateToPage(page, duration: null, curve: null);
+                  onTap: () {
+                    widget.pageController.animateToPage(2,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear);
                   },
                 ),
               ),

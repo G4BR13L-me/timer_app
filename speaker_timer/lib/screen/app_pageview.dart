@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:speaker_timer/screen/background/app_bar.dart';
 import 'package:speaker_timer/screen/background/background.dart';
-import 'package:speaker_timer/screen/background/widgets/app_bar.dart';
 
 class AppPageView extends StatefulWidget {
   @override
@@ -8,10 +8,7 @@ class AppPageView extends StatefulWidget {
 }
 
 class _AppPageViewState extends State<AppPageView> {
-
-  final controller = PageController(
-    initialPage: 0
-  );
+  final controller = PageController(initialPage: 2);
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +17,23 @@ class _AppPageViewState extends State<AppPageView> {
         controller: controller,
         scrollDirection: Axis.vertical,
         children: <Widget>[
-          Stack(children: <Widget>[
-            Background(),
-            CustomAppBar(controller)
-          ],),
-          Container(color: Colors.green,),
-          Container(color: Colors.red,),
+          Container(
+            color: Colors.green,
+          ),
+          Container(
+            color: Colors.red,
+          ),
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(
+                    top: BorderSide(color: Colors.black54,width:0.1),
+                    bottom: BorderSide(color: Colors.black54,width:0.1))),
+            child: Stack(
+              children: <Widget>[Background(), CustomAppBar(controller)],
+            ),
+          ),
         ],
       ),
     );

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
-import 'package:speaker_timer/screen/background/background.dart';
 
 void main() => runApp(new MyApp());
 
@@ -63,6 +63,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Color(0xFFEAE9EA),
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFFEAE9EA),
+      systemNavigationBarIconBrightness: Brightness.dark
+
+    ));
     return ChangeNotifierProvider(
         child: MaterialApp(
           home: AppPageView(),
