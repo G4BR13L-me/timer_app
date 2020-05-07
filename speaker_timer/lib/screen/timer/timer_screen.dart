@@ -7,13 +7,12 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:speaker_timer/controller/text_player.dart';
 
-class TxtVoice extends StatefulWidget {
+class Timer extends StatefulWidget {
   @override
-  _TxtVoiceState createState() => _TxtVoiceState();
+  _TimerState createState() => _TimerState();
 }
 
-class _TxtVoiceState extends State<TxtVoice> {
-  bool _isplaying = true;
+class _TimerState extends State<Timer> {
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +22,15 @@ class _TxtVoiceState extends State<TxtVoice> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(
+            /*SizedBox(
               width: 25.0,
               height: 25.0,
               child: CircularProgressIndicator(
                   backgroundColor: Colors.grey,
                   valueColor: AlwaysStoppedAnimation(Colors.yellow),
                   value: 0.5),
-            ),
+            ),*/
+            textToSpeechButton(),
             IconButton(
               icon: Icon(Icons.play_circle_outline),
               onPressed: () async {
@@ -55,8 +55,8 @@ class _TxtVoiceState extends State<TxtVoice> {
           AudioService.start(
             backgroundTaskEntrypoint: _textToSpeechTaskEntrypoint,
             androidNotificationChannelName: 'Audio Service Demo',
-            notificationColor: 0xFF2196f3,
-            androidNotificationIcon: 'mipmap/ic_launcher',
+            notificationColor: 0xFFDF9595,
+            androidNotificationIcon: 'drawable/ic_hourglass_icon',
           );
         },
       );
@@ -79,5 +79,5 @@ class _TxtVoiceState extends State<TxtVoice> {
 }
 
 void _textToSpeechTaskEntrypoint() async {
-  AudioServiceBackground.run(() => TextPlayerTask(10));
+  AudioServiceBackground.run(() => TextPlayerTask('Timer'));
 }

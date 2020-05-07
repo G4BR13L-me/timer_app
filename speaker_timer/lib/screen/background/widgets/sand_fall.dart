@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:fast_noise/fast_noise.dart' as noise;
 import 'package:speaker_timer/controller/status.dart';
 
 class SandFall extends CustomPainter {

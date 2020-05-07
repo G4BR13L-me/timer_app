@@ -2,6 +2,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:audio_service/audio_service.dart';
 import 'dart:async';
 
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+
 MediaControl stopControl = MediaControl(
   androidIcon: 'drawable/ic_action_stop',
   label: 'Stop',
@@ -19,9 +21,11 @@ MediaControl pauseControl = MediaControl(
 );
 
 class TextPlayerTask extends BackgroundAudioTask {
-  final number;
+  final int number;
+  final String title;
+  final StopWatchTimer stopWatch;
 
-  TextPlayerTask(this.number);
+  TextPlayerTask(this.title,{this.number=1000,this.stopWatch});
 
   FlutterTts _tts = FlutterTts();
 
@@ -40,9 +44,12 @@ class TextPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStart() async {
     playPause();
-    for (var i = 1; i <= number && _basicState != BasicPlaybackState.stopped; i++) {
+    int i = 1;
+    while( _basicState != BasicPlaybackState.stopped){
+      print(i);
       AudioServiceBackground.setMediaItem(mediaItem(i));
       AudioServiceBackground.androidForceEnableMediaButtons();
+
       _tts.speak('$i');
       // Wait for the speech or a pause request.
       await Future.any(
@@ -52,16 +59,18 @@ class TextPlayerTask extends BackgroundAudioTask {
           _basicState == BasicPlaybackState.paused) {
         // Wait to be unpaused...
         await _playPauseFuture();
+
       }
+      i = stopWatch.secondTime.value;
     }
     if (_basicState != BasicPlaybackState.stopped) onStop();
   }
 
   MediaItem mediaItem(int number) => MediaItem(
       id: 'tts_$number',
-      album: 'Counter',
-      title: '$number',
-      artist: 'Sample Artist');
+      title: '$title',
+      album: '$number',
+      );
 
   void playPause() {
     if (_basicState == BasicPlaybackState.playing) {

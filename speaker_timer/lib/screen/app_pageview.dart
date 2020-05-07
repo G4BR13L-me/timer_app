@@ -7,7 +7,7 @@ class AppPageView extends StatefulWidget {
   _AppPageViewState createState() => _AppPageViewState();
 }
 
-class _AppPageViewState extends State<AppPageView> {
+class _AppPageViewState extends State<AppPageView>{
   final controller = PageController(initialPage: 2);
 
   @override

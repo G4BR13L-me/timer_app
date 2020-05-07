@@ -7,14 +7,18 @@ import 'package:speaker_timer/screen/background/widgets/sand_fall.dart';
 
 class Background extends StatefulWidget {
   //The Clock's duration
-  final int duration = 20;
+  final int duration;
+
+  Background({this.duration = 20});
 
   @override
   _BackgroundState createState() => _BackgroundState();
 }
 
 class _BackgroundState extends State<Background>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin,
+    AutomaticKeepAliveClientMixin<Background> {
+
   AnimationController controller;
   Animation<double> heightSandTranslation;
   Animation<double> heightSandAnimation;
@@ -56,6 +60,7 @@ class _BackgroundState extends State<Background>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     print(size.height);
     print(size.width);
@@ -173,4 +178,7 @@ class _BackgroundState extends State<Background>
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

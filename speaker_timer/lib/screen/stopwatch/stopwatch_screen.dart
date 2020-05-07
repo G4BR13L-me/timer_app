@@ -28,21 +28,19 @@ class _StopWatchNewState extends State<StopWatch>
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 600));
 
-    _animation = Tween<double>(begin: 0, end: 30).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack)
-    );
+    _animation = Tween<double>(begin: 0, end: 30).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.easeOutBack));
 
     _animationController.forward();
   }
 
   @override
   void dispose() async {
+    super.dispose();
     await _stopWatchNewTimer.dispose();
     _animationController.dispose();
-    super.dispose();
   }
 
-  var time = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,63 +69,83 @@ class _StopWatchNewState extends State<StopWatch>
             children: <Widget>[
               Opacity(
                 opacity: 0,
-                child: SizedBox(height: 40,),
+                child: SizedBox(
+                  height: 40,
+                ),
               ),
               Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _stopWatchNewTimer.isRunning()?
-                    //Pause Button
-                    ExpandAnimation(
-                      fixWidth: true,
-                        child: Button(
-                            onTap: () async {
-                              _pauseSetState(widget.player);
-                            },
-                            type: 'pause'),
-                        animation: _animation)
-                    : time == 0 ?
-                        //Play Button
-                        ExpandAnimation(
-                            fixHeight: true,
-                            child: Button(
-                                onTap: () async {
-                                  _playSetState(widget.player);
-                                },
-                                type: 'play'),
-                            animation: _animation,
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              //Play Button
-                              ExpandAnimation(
-                                fixHeight: true,
-                                  child: Button(
-                                      onTap: () async {
-                                        _playSetState(widget.player);
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _stopWatchNewTimer.isRunning()
+                      ?
+                      //Pause Button
+                      ExpandAnimation(
+                          fixWidth: true,
+                          child: Button(
+                              onTap: () async {
+                                _pauseSetState(widget.player);
+                                await AudioService.pause();
+                              },
+                              type: 'pause'),
+                          animation: _animation)
+                      : widget.player.reset
+                          ?
+                          //Play Button
+                          ExpandAnimation(
+                              fixHeight: true,
+                              child: Button(
+                                  onTap: () async {
+                                    _playSetState(widget.player);
+                                    await AudioService.start(
+                                      backgroundTaskEntrypoint: () {
+                                        AudioServiceBackground.run(() =>
+                                            TextPlayerTask('StopWatch',
+                                                stopWatch: _stopWatchNewTimer));
                                       },
-                                      type: 'play'),
-                                  animation: _animation),
+                                      androidNotificationChannelName:
+                                          'Audio Service Demo',
+                                      androidStopOnRemoveTask: true,
+                                      notificationColor: 0xFFDF9595,
+                                      androidNotificationIcon:
+                                          'drawable/ic_hourglass_icon',
+                                    );
+                                  },
+                                  type: 'play'),
+                              animation: _animation,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                //Play Button
+                                ExpandAnimation(
+                                    fixHeight: true,
+                                    child: Button(
+                                        onTap: () async {
+                                          _playSetState(widget.player);
+                                          await AudioService.play();
+                                        },
+                                        type: 'play'),
+                                    animation: _animation),
 
-                              //Spacing the Widgets
-                              SizedBox(
-                                width: 45,
-                              ),
+                                //Spacing the Widgets
+                                SizedBox(
+                                  width: 45,
+                                ),
 
-                              //Reset Button
-                              ExpandAnimation(
-                                fixHeight: true,
-                                  child: Button(
-                                      onTap: () async {
-                                        _resetSetState(widget.player);
-                                      },
-                                      type: 'reset'),
-                                  animation: _animation),
-                            ],
-                          )
-              ],
-            ),
+                                //Reset Button
+                                ExpandAnimation(
+                                    fixHeight: true,
+                                    child: Button(
+                                        onTap: () async {
+                                          _resetSetState(widget.player);
+                                          await AudioService.stop();
+                                        },
+                                        type: 'reset'),
+                                    animation: _animation),
+                              ],
+                            )
+                ],
+              ),
             ],
           ),
         ],
@@ -146,39 +164,15 @@ class _StopWatchNewState extends State<StopWatch>
   void _pauseSetState(PlayStatus playStatus) {
     _animationController.reset();
     playStatus.isPlaying = false;
-    time = _stopWatchNewTimer.rawTime.value;
     _stopWatchNewTimer.onExecute.add(StopWatchExecute.stop);
     _animationController.forward();
   }
 
   void _resetSetState(PlayStatus playStatus) {
     _animationController.reset();
-    time = 0;
     playStatus.isPlaying = false;
     playStatus.reset = true;
     _stopWatchNewTimer.onExecute.add(StopWatchExecute.reset);
     _animationController.forward();
   }
-
-  RaisedButton textToSpeechButton() => startButton(
-        'TextToSpeech',
-        () {
-          AudioService.start(
-            backgroundTaskEntrypoint: _textToSpeechTaskEntrypoint,
-            androidNotificationChannelName: 'Audio Service Demo',
-            notificationColor: 0xFF2196f3,
-            androidNotificationIcon: 'mipmap/ic_launcher',
-          );
-        },
-      );
-
-  RaisedButton startButton(String label, VoidCallback onPressed) =>
-      RaisedButton(
-        child: Text(label),
-        onPressed: onPressed,
-      );
-}
-
-void _textToSpeechTaskEntrypoint() async {
-  AudioServiceBackground.run(() => TextPlayerTask(10));
 }

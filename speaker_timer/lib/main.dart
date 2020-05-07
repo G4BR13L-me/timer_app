@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
+import 'package:speaker_timer/screen/timer/timer_screen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -20,12 +21,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     connect();
   }
 
+
   @override
   void dispose() {
     disconnect();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

@@ -79,5 +79,5 @@ class _TxtVoiceState extends State<TxtVoice> {
 }
 
 void _textToSpeechTaskEntrypoint() async {
-  AudioServiceBackground.run(() => TextPlayerTask(10));
+  AudioServiceBackground.run(() => TextPlayerTask('Alarm'));
 }
