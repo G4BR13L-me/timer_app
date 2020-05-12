@@ -47,11 +47,28 @@ class _CustomAppBarState extends State<CustomAppBar>
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    Widget _barButton(IconData icon, int index){
+      return Padding(
+        padding: EdgeInsets.symmetric(
+            vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
+        child: GestureDetector(
+          child: Icon(icon),
+          onTap: () {
+            widget.pageController.animateToPage(index,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOutCubic);
+          },
+        ),
+      );
+    }
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
         return Container(
-          height: MediaQuery.of(context).size.height,
+          height: size.height,
           width: scrollAnimation.value,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
@@ -61,7 +78,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                     color: Colors.black54,
                     spreadRadius: controller.isDismissed
                         ? 0
-                        : MediaQuery.of(context).size.width / 1.2)
+                        : size.width / 1.2)
               ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -70,19 +87,19 @@ class _CustomAppBarState extends State<CustomAppBar>
                 : CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.only(top: 5),
                 child: GestureDetector(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Transform.rotate(
                         angle: arrowAnimation.value,
-                        child: Icon(Icons.arrow_right),
+                        child: Icon(Icons.arrow_right,color: Color(0xFFDF9595),),
                       ),
                       Image.asset(
                         'assets/hourglass_icon.png',
-                        width: 30,
-                        height: 50,
+                        width: size.width/12,
+                        height: size.height/14,
                       ),
                     ],
                   ),
@@ -95,42 +112,9 @@ class _CustomAppBarState extends State<CustomAppBar>
                 ),
               ),
               Divider(),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
-                child: GestureDetector(
-                  child: Icon(Icons.timer),
-                  onTap: () {
-                    widget.pageController.animateToPage(0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear);
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
-                child: GestureDetector(
-                  child: Icon(Icons.alarm),
-                  onTap: () {
-                    widget.pageController.animateToPage(1,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear);
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
-                child: GestureDetector(
-                  child: Icon(Icons.hourglass_empty),
-                  onTap: () {
-                    widget.pageController.animateToPage(2,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear);
-                  },
-                ),
-              ),
+              _barButton(Icons.timer, 0),
+              _barButton(Icons.alarm, 1),
+              _barButton(Icons.hourglass_empty, 2),
             ],
           ),
         );

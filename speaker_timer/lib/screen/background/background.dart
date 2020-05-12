@@ -172,7 +172,7 @@ class _BackgroundState extends State<Background>
                 ),
 
                 //The middle part of the Hourglass
-                Center(child: Crystal(size.width, size.height, player)),
+                Center(child: Crystal(size.width, size.height, player,widget.duration)),
               ],
             ));
       },

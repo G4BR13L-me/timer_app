@@ -5,10 +5,11 @@ import 'dart:math' as math;
 import 'package:speaker_timer/screen/stopwatch/stopwatch_screen.dart';
 
 class Crystal extends StatelessWidget {
-  Crystal(this.width, this.height,this.player);
+  Crystal(this.width, this.height,this.player,this.duration);
   final double width;
   final double height;
   final PlayStatus player;
+  final int duration;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class Crystal extends StatelessWidget {
               color: Color(0xFFDF9595),),
           child: Transform.rotate(
             angle: -0.8,
-            child: StopWatch(player)
+            child: StopWatch(player,duration)
           ),
         ), 
         transform: Matrix4.translationValues(width/10.0, -height/70, 0)..rotateZ(math.pi/4.0),
@@ -42,7 +43,7 @@ class Crystal extends StatelessWidget {
               )]),
           child: Transform.rotate(
             angle: -0.8,
-            child: StopWatch(player)
+            child: StopWatch(player,duration)
           ),
         ), 
         transform: Matrix4.translationValues(width/10.0, 0, 0)..rotateZ(math.pi/4.0),

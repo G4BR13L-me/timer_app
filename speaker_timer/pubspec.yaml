@@ -28,7 +28,7 @@ dependencies:
   android_alarm_manager: ^0.4.5+8
   stop_watch_timer: ^0.3.0
   provider: ^4.0.5
-  
+  vibration: ^1.2.4
 
 dev_dependencies:
   flutter_test:

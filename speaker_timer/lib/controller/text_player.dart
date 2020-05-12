@@ -44,13 +44,13 @@ class TextPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStart() async {
     playPause();
-    int i = 1;
+    int second = stopWatch.secondTime.value;
     while( _basicState != BasicPlaybackState.stopped){
-      print(i);
-      AudioServiceBackground.setMediaItem(mediaItem(i));
+      AudioServiceBackground.setMediaItem(mediaItem(second));
       AudioServiceBackground.androidForceEnableMediaButtons();
 
-      _tts.speak('$i');
+      _tts.speak('$second');
+
       // Wait for the speech or a pause request.
       await Future.any(
           [Future.delayed(Duration(seconds: 1)), _playPauseFuture()]);
@@ -61,7 +61,6 @@ class TextPlayerTask extends BackgroundAudioTask {
         await _playPauseFuture();
 
       }
-      i = stopWatch.secondTime.value;
     }
     if (_basicState != BasicPlaybackState.stopped) onStop();
   }
