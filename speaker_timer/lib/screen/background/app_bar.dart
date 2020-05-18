@@ -14,6 +14,7 @@ class _CustomAppBarState extends State<CustomAppBar>
   AnimationController controller;
   Animation scrollAnimation;
   Animation arrowAnimation;
+  int pageIndex = 2;
 
   @override
   void initState() {
@@ -25,6 +26,11 @@ class _CustomAppBarState extends State<CustomAppBar>
             parent: controller,
             curve: Curves.easeOutSine,
             reverseCurve: Curves.easeInSine));
+    widget.pageController.addListener(() {
+      setState(() {
+        pageIndex = widget.pageController.page.round();
+      });
+    });
   }
 
   @override
@@ -48,21 +54,52 @@ class _CustomAppBarState extends State<CustomAppBar>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
-    Widget _barButton(IconData icon, int index){
-      return Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: 15, horizontal: controller.isDismissed ? 0 : 20),
-        child: GestureDetector(
-          child: Icon(icon),
+    Widget _barButton(IconData icon, int index) => GestureDetector(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: controller.isDismissed ? 0 : 7),
+            height: size.height / 16,
+            width: size.width / 7,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Color(index != pageIndex ? 0xFFEAE9EA : 0xFFDF9595)),
+            child: Icon(
+              icon,
+              color: Color(index == pageIndex ? 0xFFEAE9EA : 0xFFDF9595),
+            )),
           onTap: () {
             widget.pageController.animateToPage(index,
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOutCubic);
           },
-        ),
-      );
-    }
+        );
+    Widget _appIcon() => Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: GestureDetector(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Transform.rotate(
+                  angle: arrowAnimation.value,
+                  child: Icon(
+                    Icons.arrow_right,
+                    color: Color(0xFFDF9595),
+                  ),
+                ),
+                Image.asset(
+                  'assets/hourglass_icon.png',
+                  width: size.width / 12,
+                  height: size.height / 14,
+                ),
+              ],
+            ),
+            onTap: () {
+              if (!controller.isCompleted)
+                controller.forward();
+              else
+                controller.reverse();
+            },
+          ),
+        );
 
     return AnimatedBuilder(
       animation: controller,
@@ -76,9 +113,7 @@ class _CustomAppBarState extends State<CustomAppBar>
               boxShadow: [
                 BoxShadow(
                     color: Colors.black54,
-                    spreadRadius: controller.isDismissed
-                        ? 0
-                        : size.width / 1.2)
+                    spreadRadius: controller.isDismissed ? 0 : size.width / 1.2)
               ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -86,34 +121,10 @@ class _CustomAppBarState extends State<CustomAppBar>
                 ? CrossAxisAlignment.center
                 : CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: GestureDetector(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Transform.rotate(
-                        angle: arrowAnimation.value,
-                        child: Icon(Icons.arrow_right,color: Color(0xFFDF9595),),
-                      ),
-                      Image.asset(
-                        'assets/hourglass_icon.png',
-                        width: size.width/12,
-                        height: size.height/14,
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    if (!controller.isCompleted)
-                      controller.forward();
-                    else
-                      controller.reverse();
-                  },
-                ),
-              ),
+              _appIcon(),
               Divider(),
-              _barButton(Icons.timer, 0),
-              _barButton(Icons.alarm, 1),
+              _barButton(Icons.alarm, 0),
+              _barButton(Icons.timer, 1),
               _barButton(Icons.hourglass_empty, 2),
             ],
           ),

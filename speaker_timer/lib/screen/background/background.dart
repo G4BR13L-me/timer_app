@@ -4,12 +4,14 @@ import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/background/widgets/sand.dart';
 import 'package:speaker_timer/screen/background/widgets/sand_fall.dart';
+import 'package:speaker_timer/screen/stopwatch/stopwatch_screen.dart';
 
 class Background extends StatefulWidget {
   //The Clock's duration
   final int duration;
+  final bool isTimer;
 
-  Background({this.duration = 20});
+  Background({this.duration = 20,this.isTimer = false});
 
   @override
   _BackgroundState createState() => _BackgroundState();
@@ -30,7 +32,7 @@ class _BackgroundState extends State<Background>
   void initState() {
     super.initState();
     controller = AnimationController(
-        vsync: this, duration: Duration(seconds: widget.duration));
+        vsync: this, duration: Duration(milliseconds: widget.duration));
     heightSandAnimation = Tween<double>(begin: 1.0, end: 0.25)
         .animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
     heightSandTranslation = Tween<double>(begin: -0.4, end: -1.2)
@@ -62,8 +64,6 @@ class _BackgroundState extends State<Background>
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
-    print(size.height);
-    print(size.width);
 
     final Image img = Image.asset(
       size.width > size.height
@@ -172,7 +172,11 @@ class _BackgroundState extends State<Background>
                 ),
 
                 //The middle part of the Hourglass
-                Center(child: Crystal(size.width, size.height, player,widget.duration)),
+                Center(
+                  child: Crystal(
+                    child: StopWatch(player,widget.duration,widget.isTimer)
+                  )
+                ),
               ],
             ));
       },

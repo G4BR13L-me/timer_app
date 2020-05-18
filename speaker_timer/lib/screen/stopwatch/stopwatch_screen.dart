@@ -9,8 +9,9 @@ import 'package:vibration/vibration.dart';
 class StopWatch extends StatefulWidget {
   final PlayStatus player;
   final int duration;
+  final bool isTimer;
 
-  StopWatch(this.player,this.duration);
+  StopWatch(this.player,this.duration,this.isTimer);
   @override
   _StopWatchNewState createState() => _StopWatchNewState();
 }
@@ -60,8 +61,9 @@ class _StopWatchNewState extends State<StopWatch>
               initialData: 0,
               stream: _stopWatchNewTimer.rawTime,
               builder: (context, snapshot) {
+
                 return Text(
-                  StopWatchTimer.getDisplayTime(snapshot.data),
+                  StopWatchTimer.getDisplayTime(widget.isTimer ? widget.duration - snapshot.data : snapshot.data),
                   style: TextStyle(color: Color(0xFFEAE9EA), fontSize: 45.0),
                 );
               }),

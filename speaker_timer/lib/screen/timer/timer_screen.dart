@@ -1,83 +1,51 @@
-import 'dart:isolate';
-import 'dart:math';
-import 'dart:ui';
-
-import 'package:android_alarm_manager/android_alarm_manager.dart';
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:speaker_timer/controller/text_player.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:speaker_timer/screen/background/background.dart';
+import 'dart:math' as math;
+
+import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 
 class Timer extends StatefulWidget {
   @override
-  _TimerState createState() => _TimerState();
+  _TimerNewState createState() => _TimerNewState();
 }
 
-class _TimerState extends State<Timer> {
+class _TimerNewState extends State<Timer> {
+  bool selected = false;
+  int millisecond;
+
+  int dateTimeToMilliSecond(DateTime date){
+    return date.second*1000 + date.minute*60000 + date.hour*1440000;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Teste'), centerTitle: true),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            /*SizedBox(
-              width: 25.0,
-              height: 25.0,
-              child: CircularProgressIndicator(
-                  backgroundColor: Colors.grey,
-                  valueColor: AlwaysStoppedAnimation(Colors.yellow),
-                  value: 0.5),
-            ),*/
-            textToSpeechButton(),
-            IconButton(
-              icon: Icon(Icons.play_circle_outline),
-              onPressed: () async {
-                //  await AndroidAlarmManager.oneShotAt(DateTime(year), Random().nextInt(pow(2, 31)), callback);
-                /*  .oneShot(
-                  const Duration(seconds: 5),
-                  // Ensure we have a unique alarm ID.
-                  Random().nextInt(pow(2, 31)),
-                  callback,
-                  exact: true,
-                  wakeup: true,
-                );*/
-              },
+    return Container(
+      width: double.infinity,
+      height:double.infinity,
+      color: Color(0xFFEAE9EA),
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: Crystal(
+              child: GestureDetector(
+                onTap: (){
+                  DatePicker.showTimePicker(context, showTitleActions: true,
+                  onConfirm: (date) {
+                    setState(() {
+                      selected = true;
+                      millisecond = dateTimeToMilliSecond(date);
+                    });
+                  }, currentTime: DateTime.now());
+                },
+                child: Icon(Icons.insert_invitation,color: Colors.grey.withOpacity(0.5),size: 150,),
+              )
             )
-          ],
-        ));
+          ),
+          selected? Background(isTimer: true,duration: millisecond):
+          IgnorePointer(child: Container(color: Colors.transparent)),
+        ],
+      ),
+    );
   }
-
-  RaisedButton textToSpeechButton() => startButton(
-        'TextToSpeech',
-        () {
-          AudioService.start(
-            backgroundTaskEntrypoint: _textToSpeechTaskEntrypoint,
-            androidNotificationChannelName: 'Audio Service Demo',
-            notificationColor: 0xFFDF9595,
-            androidNotificationIcon: 'drawable/ic_hourglass_icon',
-          );
-        },
-      );
-
-  RaisedButton startButton(String label, VoidCallback onPressed) =>
-      RaisedButton(
-        child: Text(label),
-        onPressed: onPressed,
-      );
-
-  static SendPort uiSendPort;
-
-  // The callback for our alarm
-  static Future<void> callback() async {
-    print('Alarm fired!');
-    // This will be null if we're running in the background.
-    uiSendPort ??= IsolateNameServer.lookupPortByName('isolate');
-    uiSendPort?.send(null);
-  }
-}
-
-void _textToSpeechTaskEntrypoint() async {
-  AudioServiceBackground.run(() => TextPlayerTask('Timer'));
 }
