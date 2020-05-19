@@ -17,7 +17,7 @@ class _AppPageViewState extends State<AppPageView> {
       decoration: BoxDecoration(
           border: Border(
               top: BorderSide(color: Colors.black54, width: 0.1),
-              bottom: BorderSide(color: Colors.black54, width: 0.1))),
+              bottom: BorderSide(color: Colors.black54, width: 0.08))),
       child: child);
 
   @override
@@ -29,39 +29,21 @@ class _AppPageViewState extends State<AppPageView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          PageView(
-            controller: controller,
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              borderContainer(
-                child: Stack(
-                  children: <Widget>[
-                    Container(color: Colors.green,),
-                    Hero(tag: 'appbar', child: CustomAppBar(controller))
-                  ],
-                ),
-              ),
-              borderContainer(
-                child: Stack(
-                  children: <Widget>[
-                    Timer(),
-                    Hero(tag: 'appbar', child: CustomAppBar(controller))
-                  ],
-                ),
-              ),
-              borderContainer(
-                child: Stack(
-                  children: <Widget>[
-                    Background(),
-                    Hero(tag: 'appbar', child: CustomAppBar(controller))
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+      child: borderContainer(
+        child: Stack(
+          children: <Widget>[
+            PageView(
+              controller: controller,
+              scrollDirection: Axis.vertical,
+              children: <Widget>[
+                borderContainer(child: Container(color: Colors.green)),
+                borderContainer(child: Timer()),
+                borderContainer(child: Background())
+              ],
+            ),
+            Hero(tag: 'appbar', child: CustomAppBar(controller)),
+          ],
+        ),
       ),
     );
   }
