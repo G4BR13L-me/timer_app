@@ -64,6 +64,8 @@ class _BackgroundState extends State<Background>
   Widget build(BuildContext context) {
     super.build(context);
     final size = MediaQuery.of(context).size;
+    print(size.width);
+    print(size.height);
 
     final Image img = Image.asset(
       size.width > size.height

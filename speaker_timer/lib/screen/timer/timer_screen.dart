@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:speaker_timer/screen/background/background.dart';
-import 'dart:math' as math;
 
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
+import 'package:speaker_timer/screen/timer/widgets/blink.dart';
 
 class Timer extends StatefulWidget {
   @override
   _TimerNewState createState() => _TimerNewState();
 }
 
-class _TimerNewState extends State<Timer> {
+class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Timer> {
   bool selected = false;
   int millisecond;
 
@@ -20,13 +20,15 @@ class _TimerNewState extends State<Timer> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       width: double.infinity,
       height:double.infinity,
       color: Color(0xFFEAE9EA),
       child: Stack(
         children: <Widget>[
-          Center(
+          selected? Container(color: Colors.transparent) 
+          : Center(
             child: Crystal(
               child: GestureDetector(
                 onTap: (){
@@ -36,9 +38,23 @@ class _TimerNewState extends State<Timer> {
                       selected = true;
                       millisecond = dateTimeToMilliSecond(date);
                     });
-                  }, currentTime: DateTime.now());
+                  }, 
+                  currentTime: DateTime.now(),
+                  /*theme: DatePickerTheme(
+
+                  )*/
+                  );
                 },
-                child: Icon(Icons.insert_invitation,color: Colors.grey.withOpacity(0.5),size: 150,),
+                child: Blink(
+                  child: Center(
+                    child: Text(
+                    '00:00.00',
+                    style: TextStyle(
+                      color: Color(0xFFEAE9EA), 
+                      fontSize: MediaQuery.of(context).size.width/8.8,
+                      decoration: TextDecoration.none),),
+                  ),
+                )
               )
             )
           ),
@@ -48,4 +64,7 @@ class _TimerNewState extends State<Timer> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
