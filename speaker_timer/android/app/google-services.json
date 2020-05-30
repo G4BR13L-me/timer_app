@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "273439346274",
+    "firebase_url": "https://stomer-3bf27.firebaseio.com",
+    "project_id": "stomer-3bf27",
+    "storage_bucket": "stomer-3bf27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273439346274:android:e2ab183db3834db6e08b3b",
+        "android_client_info": {
+          "package_name": "com.example.speaker_timer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273439346274-61mrktnbfagg2do60d8hmlnm3vllh3kp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAupWyYhRUGAXV8hxquqPNvH-Ey6nIihq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273439346274-61mrktnbfagg2do60d8hmlnm3vllh3kp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,7 +14,7 @@ class _CustomAppBarState extends State<CustomAppBar>
   AnimationController controller;
   Animation scrollAnimation;
   Animation arrowAnimation;
-  int pageIndex = 2;
+  int pageIndex = 1;
 
   @override
   void initState() {
@@ -54,6 +54,7 @@ class _CustomAppBarState extends State<CustomAppBar>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     Widget _barButton(IconData icon, int index) => GestureDetector(
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: controller.isDismissed ? 0 : 7),
@@ -72,6 +73,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                 curve: Curves.easeInOutCubic);
           },
         );
+
     Widget _appIcon() => Padding(
           padding: const EdgeInsets.only(top: 5),
           child: GestureDetector(
@@ -82,7 +84,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                   angle: arrowAnimation.value,
                   child: Icon(
                     Icons.arrow_right,
-                    color: Color(0xFFDF9595),
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
                 Image.asset(
@@ -109,7 +111,7 @@ class _CustomAppBarState extends State<CustomAppBar>
           width: scrollAnimation.value,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
-              color: Color(0xFFEAE9EA),
+              color: Theme.of(context).backgroundColor,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black54,
@@ -123,9 +125,8 @@ class _CustomAppBarState extends State<CustomAppBar>
             children: <Widget>[
               _appIcon(),
               Divider(),
-              _barButton(Icons.alarm, 0),
-              _barButton(Icons.timer, 1),
-              _barButton(Icons.hourglass_empty, 2),
+              _barButton(Icons.timer, 0),
+              _barButton(Icons.hourglass_empty, 1),
             ],
           ),
         );

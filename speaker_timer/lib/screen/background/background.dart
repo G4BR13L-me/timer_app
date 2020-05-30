@@ -11,14 +11,14 @@ class Background extends StatefulWidget {
   final int duration;
   final bool isTimer;
 
-  Background({this.duration = 20,this.isTimer = false});
+  Background({this.duration = 20000,this.isTimer = false});
 
   @override
   _BackgroundState createState() => _BackgroundState();
 }
 
 class _BackgroundState extends State<Background>
-    with SingleTickerProviderStateMixin,
+    with SingleTickerProviderStateMixin<Background>,
     AutomaticKeepAliveClientMixin<Background> {
 
   AnimationController controller;
@@ -86,14 +86,13 @@ class _BackgroundState extends State<Background>
           controller.stop();
         }
         return Container(
-            color: Color(0xFFEAE9EA),
+            color: Theme.of(context).backgroundColor,
             width: size.width,
             height: size.height,
             child: Stack(
               children: <Widget>[
                 // Positioned and Transform are two different ways to move
                 // any widget. However, Positioned is specific for a Stack case.
-                // Here I'm using both just for the sake of learning
                 Positioned(
                   top: 450,
                   left: 191,
@@ -105,7 +104,7 @@ class _BackgroundState extends State<Background>
                           width: 50,
                           height: size.height / 3.8,
                           child: CustomPaint(
-                            painter: SandFall(player),
+                            painter: SandFall(player,context),
                           ),
                         );
                       }),

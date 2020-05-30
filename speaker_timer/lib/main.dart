@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
-import 'package:speaker_timer/screen/timer/timer_screen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -73,16 +70,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       systemNavigationBarIconBrightness: Brightness.dark
 
     ));
-    return ChangeNotifierProvider(
-        child: MaterialApp(
-          home: AppPageView(),
-          theme: ThemeData(
-            primaryColor: Color(0xFF6BB8FF),
-            accentColor: Color(0xFFFF6B6B)
-          ),
-          debugShowCheckedModeBanner: false,
-      ), 
-      create: (_) => PlayStatus(),
+    return MaterialApp(
+      home: AppPageView(),
+      theme: ThemeData(
+        backgroundColor: Color(0xFFEAE9EA),
+        primaryColor: Color(0xFFDF9595),
+        accentColor: Color(0xFFDF9595)
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
   /*

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:speaker_timer/controller/ad_mob.dart';
 import 'package:speaker_timer/screen/background/background.dart';
-
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/timer/widgets/blink.dart';
+import 'package:speaker_timer/screen/timer/widgets/flutter_datetime_picker_lib/src/datetime_picker_theme.dart';
+import '../app_pageview.dart';
+import 'widgets/flutter_datetime_picker_lib/flutter_datetime_picker.dart';
 
 class Timer extends StatefulWidget {
   @override
@@ -24,7 +26,7 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
     return Container(
       width: double.infinity,
       height:double.infinity,
-      color: Color(0xFFEAE9EA),
+      color: Theme.of(context).backgroundColor,
       child: Stack(
         children: <Widget>[
           selected? Container(color: Colors.transparent) 
@@ -32,6 +34,9 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
             child: Crystal(
               child: GestureDetector(
                 onTap: (){
+                  // Close the APP Ad Banner due to UX while picking the Time
+                  AppAds.removeBanner();
+
                   DatePicker.showTimePicker(context, showTitleActions: true,
                   onConfirm: (date) {
                     setState(() {
@@ -40,17 +45,21 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
                     });
                   }, 
                   currentTime: DateTime.now(),
-                  /*theme: DatePickerTheme(
-
-                  )*/
+                  theme: DatePickerTheme(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    itemStyle: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 18),
+                    subTitleStyle: TextStyle(color: Theme.of(context).backgroundColor.withOpacity(0.5), fontSize: 14),
+                    cancelStyle: TextStyle(color: Theme.of(context).backgroundColor.withOpacity(0.7), fontSize: 16),
+                    doneStyle: TextStyle(color: Theme.of(context).accentColor, fontSize: 16),
+                  ),
                   );
                 },
                 child: Blink(
                   child: Center(
                     child: Text(
-                    '00:00.00',
+                    '00:00:00',
                     style: TextStyle(
-                      color: Color(0xFFEAE9EA), 
+                      color: Theme.of(context).backgroundColor, 
                       fontSize: MediaQuery.of(context).size.width/8.8,
                       decoration: TextDecoration.none),),
                   ),

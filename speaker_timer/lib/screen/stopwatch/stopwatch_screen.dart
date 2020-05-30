@@ -25,10 +25,6 @@ class _StopWatchNewState extends State<StopWatch>
   @override
   void initState() {
     super.initState();
-    _stopWatchNewTimer.secondTime.listen((second) {
-      if(second%widget.duration==0&&second!=0)
-        Vibration.vibrate(pattern: [150, 150, 100],intensities: [100,0,75] );
-    });
 
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 600));
@@ -48,10 +44,25 @@ class _StopWatchNewState extends State<StopWatch>
 
   @override
   Widget build(BuildContext context) {
+    String getDisplayHour(int value) {
+      final m = (value / 1440000).floor();
+      return m.toString().padLeft(2, '0');
+    }
+    
+    // Display Time for The Timer mode [hour : minute : second]
+    String getDisplayTime(int value){
+      String result = '';
+
+      result += '${getDisplayHour(value)}';
+      result += ':';
+      result += '${StopWatchTimer.getDisplayTimeMinute(value)}';
+      result += ':';
+      result += '${StopWatchTimer.getDisplayTimeSecond(value)}';
+      return result;
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      //primary: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,17 +72,27 @@ class _StopWatchNewState extends State<StopWatch>
               initialData: 0,
               stream: _stopWatchNewTimer.rawTime,
               builder: (context, snapshot) {
-
+                if(widget.isTimer){
+                  // Vibrate when the Timer ends
+                  if(widget.duration - snapshot.data==0)
+                    Vibration.vibrate(pattern: [150, 150, 100],intensities: [100,0,75],repeat: 2);
+                }else{
+                  // Vibrate every time the time is multiple of the widget.duration parameter
+                  if(snapshot.data%widget.duration==0&&snapshot.data!=0)
+                    Vibration.vibrate(pattern: [150, 150, 100],intensities: [100,0,75],repeat: 2);
+                }
                 return Text(
-                  StopWatchTimer.getDisplayTime(widget.isTimer ? widget.duration - snapshot.data : snapshot.data),
-                  style: TextStyle(color: Color(0xFFEAE9EA), fontSize: 45.0),
+                  widget.isTimer 
+                  ? getDisplayTime(widget.duration - snapshot.data)
+                  : StopWatchTimer.getDisplayTime(snapshot.data),
+                  style: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 45.0),
                 );
               }),
           SizedBox(
             height: 20.0,
           ),
 
-          /// Button
+          /// BUTTONS
           Stack(
             children: <Widget>[
               Opacity(

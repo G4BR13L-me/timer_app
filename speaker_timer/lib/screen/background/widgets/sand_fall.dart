@@ -7,16 +7,17 @@ class SandFall extends CustomPainter {
   static List<double> path = [];
   final Random r = Random();
   final PlayStatus playStatus;
-  SandFall(this.playStatus);
+  final BuildContext context;
+  SandFall(this.playStatus,this.context);
 
   @override
   void paint(Canvas canvas, Size size) {
-    if(playStatus.reset) { _initPoints(size.height);}
+    if(playStatus.reset) {path=[]; _initPoints(size.height);}
     else if(playStatus.isPlaying) {_switchPosition();_increaseSandDrop();}
     else {_switchPosition(); _cleanDrop();}
 
     var paint = Paint()
-    ..color = Color(0xFFDF9595);
+    ..color = Theme.of(context).primaryColor;
     var index = 0; 
 
     for (var i = 5.0; i < size.height; i+=10) {

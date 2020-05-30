@@ -17,7 +17,7 @@ class Crystal extends StatelessWidget {
           height: size.width / 4,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Color(0xFFDF9595),),
+              color: Theme.of(context).primaryColor,),
           child: Transform.rotate(
             angle: -0.8,
             child: child
@@ -27,13 +27,13 @@ class Crystal extends StatelessWidget {
         );
       else
       return Transform(
-      origin: Offset( size.height/7.0,size.height/7.0),
+      origin: Offset( size.height/6.6,size.height/6.6),
         child: Container(
-          width: size.height / 3.5,
-          height: size.height / 3.5,
+          width: size.height / 3.3,
+          height: size.height / 3.3,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Color(0xFFDF9595),
+              color: Theme.of(context).primaryColor,
               boxShadow: [BoxShadow(
                 blurRadius: 2.0,
               )]),
@@ -42,7 +42,7 @@ class Crystal extends StatelessWidget {
             child: child
           ),
         ), 
-        transform: Matrix4.translationValues(size.width/10.0, 0, 0)..rotateZ(math.pi/4.0),
+        transform: Matrix4.translationValues(size.width/10.2, 0, 0)..rotateZ(math.pi/4.0),
         );
   }
 }

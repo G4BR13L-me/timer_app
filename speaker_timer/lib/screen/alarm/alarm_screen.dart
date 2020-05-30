@@ -1,20 +1,16 @@
 import 'dart:isolate';
-import 'dart:math';
 import 'dart:ui';
-
-import 'package:android_alarm_manager/android_alarm_manager.dart';
+//import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:speaker_timer/controller/text_player.dart';
 
-class TxtVoice extends StatefulWidget {
+class Alarm extends StatefulWidget {
   @override
-  _TxtVoiceState createState() => _TxtVoiceState();
+  _AlarmState createState() => _AlarmState();
 }
 
-class _TxtVoiceState extends State<TxtVoice> {
-  bool _isplaying = true;
-
+class _AlarmState extends State<Alarm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
