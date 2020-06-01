@@ -54,6 +54,9 @@ class _CustomAppBarState extends State<CustomAppBar>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    Color accentColor = Theme.of(context).accentColor;
+    Color buttonColor = Theme.of(context).buttonColor;
+    Color backgroundColor = Theme.of(context).backgroundColor;
 
     Widget _barButton(IconData icon, int index) => GestureDetector(
           child: Container(
@@ -62,10 +65,10 @@ class _CustomAppBarState extends State<CustomAppBar>
             width: size.width / 7,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: Color(index != pageIndex ? 0xFFEAE9EA : 0xFFDF9595)),
+                color: index != pageIndex ? backgroundColor : buttonColor),
             child: Icon(
               icon,
-              color: Color(index == pageIndex ? 0xFFEAE9EA : 0xFFDF9595),
+              color: index == pageIndex ? backgroundColor : accentColor
             )),
           onTap: () {
             widget.pageController.animateToPage(index,
@@ -84,7 +87,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                   angle: arrowAnimation.value,
                   child: Icon(
                     Icons.arrow_right,
-                    color: Theme.of(context).primaryColor,
+                    color: accentColor,
                   ),
                 ),
                 Image.asset(
@@ -111,7 +114,7 @@ class _CustomAppBarState extends State<CustomAppBar>
           width: scrollAnimation.value,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
-              color: Theme.of(context).backgroundColor,
+              color: backgroundColor,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black54,

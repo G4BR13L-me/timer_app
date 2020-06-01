@@ -23,14 +23,17 @@ MediaControl pauseControl = MediaControl(
 class TextPlayerTask extends BackgroundAudioTask {
   final int number;
   final String title;
-  final StopWatchTimer stopWatch;
 
-  TextPlayerTask(this.title,{this.number=1000,this.stopWatch});
+  TextPlayerTask(this.title,{this.number=1000});
 
   FlutterTts _tts = FlutterTts();
 
   /// Represents the completion of a period of playing or pausing.
   Completer _playPauseCompleter = Completer();
+    AudioProcessingState get _processingState =>
+      AudioServiceBackground.state.processingState;
+
+  bool get _playing => AudioServiceBackground.state.playing;
 
   /// This wraps [_playPauseCompleter.future], replacing [_playPauseCompleter]
   /// if it has already completed.
@@ -39,30 +42,25 @@ class TextPlayerTask extends BackgroundAudioTask {
     return _playPauseCompleter.future;
   }
 
-  BasicPlaybackState get _basicState => AudioServiceBackground.state.basicState;
-
   @override
-  Future<void> onStart() async {
+  Future<void> onStart(Map<String, dynamic> params) async {
     playPause();
-    int second = stopWatch.secondTime.value;
-    while( _basicState != BasicPlaybackState.stopped){
-      AudioServiceBackground.setMediaItem(mediaItem(second));
-      AudioServiceBackground.androidForceEnableMediaButtons();
-
-      _tts.speak('$second');
-
-      // Wait for the speech or a pause request.
-      await Future.any(
-          [Future.delayed(Duration(seconds: 1)), _playPauseFuture()]);
-      // If we were just paused...
-      if (_playPauseCompleter.isCompleted &&
-          _basicState == BasicPlaybackState.paused) {
-        // Wait to be unpaused...
-        await _playPauseFuture();
-
-      }
+    int second = params['stopWatch'].secondTime.value;
+    AudioServiceBackground.setMediaItem(mediaItem(second));
+    AudioServiceBackground.androidForceEnableMediaButtons();
+    _tts.speak('$second');
+    // Wait for the speech or a pause request.
+    await Future.any(
+        [Future.delayed(Duration(seconds: 1)), _playPauseFuture()]);
+    // If we were just paused...
+    if (_playPauseCompleter.isCompleted &&
+        !_playing &&
+        _processingState != AudioProcessingState.stopped) {
+      // Wait to be unpaused...
+      await _playPauseFuture();
     }
-    if (_basicState != BasicPlaybackState.stopped) onStop();
+    
+    if (_processingState != AudioProcessingState.stopped) onStop();
   }
 
   MediaItem mediaItem(int number) => MediaItem(
@@ -72,16 +70,18 @@ class TextPlayerTask extends BackgroundAudioTask {
       );
 
   void playPause() {
-    if (_basicState == BasicPlaybackState.playing) {
+    if (_playing) {
       _tts.stop();
       AudioServiceBackground.setState(
         controls: [playControl, stopControl],
-        basicState: BasicPlaybackState.paused,
+        processingState: AudioProcessingState.ready,
+        playing: false,
       );
     } else {
       AudioServiceBackground.setState(
         controls: [pauseControl, stopControl],
-        basicState: BasicPlaybackState.playing,
+        processingState: AudioProcessingState.ready,
+        playing: true,
       );
     }
     _playPauseCompleter.complete();
@@ -103,13 +103,108 @@ class TextPlayerTask extends BackgroundAudioTask {
   }
 
   @override
-  void onStop() {
-    if (_basicState == BasicPlaybackState.stopped) return;
+  void onStop() async {
+    if (_processingState == AudioProcessingState.stopped) return;
     _tts.stop();
-    AudioServiceBackground.setState(
+    await AudioServiceBackground.setState(
       controls: [],
-      basicState: BasicPlaybackState.stopped,
+      processingState: AudioProcessingState.stopped,
+      playing: false,
     );
     _playPauseCompleter.complete();
   }
 }
+/*
+class TextPlayerTask extends BackgroundAudioTask {
+  FlutterTts _tts = FlutterTts();
+
+  /// Represents the completion of a period of playing or pausing.
+  Completer _playPauseCompleter = Completer();
+
+  /// This wraps [_playPauseCompleter.future], replacing [_playPauseCompleter]
+  /// if it has already completed.
+  Future _playPauseFuture() {
+    if (_playPauseCompleter.isCompleted) _playPauseCompleter = Completer();
+    return _playPauseCompleter.future;
+  }
+
+  AudioProcessingState get _processingState =>
+      AudioServiceBackground.state.processingState;
+
+  bool get _playing => AudioServiceBackground.state.playing;
+
+  @override
+  Future<void> onStart(Map<String, dynamic> params) async {
+    playPause();
+    for (var i = 1;
+        i <= 10 && _processingState != AudioProcessingState.stopped;
+        i++) {
+      AudioServiceBackground.setMediaItem(mediaItem(i));
+      AudioServiceBackground.androidForceEnableMediaButtons();
+      _tts.speak('$i');
+      // Wait for the speech or a pause request.
+      await Future.any(
+          [Future.delayed(Duration(seconds: 1)), _playPauseFuture()]);
+      // If we were just paused...
+      if (_playPauseCompleter.isCompleted &&
+          !_playing &&
+          _processingState != AudioProcessingState.stopped) {
+        // Wait to be unpaused...
+        await _playPauseFuture();
+      }
+    }
+    if (_processingState != AudioProcessingState.stopped) onStop();
+  }
+
+  MediaItem mediaItem(int number) => MediaItem(
+      id: 'tts_$number',
+      album: 'Numbers',
+      title: 'Number $number',
+      artist: 'Sample Artist');
+
+  void playPause() {
+    if (_playing) {
+      _tts.stop();
+      AudioServiceBackground.setState(
+        controls: [playControl, stopControl],
+        processingState: AudioProcessingState.ready,
+        playing: false,
+      );
+    } else {
+      AudioServiceBackground.setState(
+        controls: [pauseControl, stopControl],
+        processingState: AudioProcessingState.ready,
+        playing: true,
+      );
+    }
+    _playPauseCompleter.complete();
+  }
+
+  @override
+  void onPlay() {
+    playPause();
+  }
+
+  @override
+  void onPause() {
+    playPause();
+  }
+
+  @override
+  void onClick(MediaButton button) {
+    playPause();
+  }
+
+  @override
+  Future<void> onStop() async {
+    if (_processingState == AudioProcessingState.stopped) return;
+    _tts.stop();
+    await AudioServiceBackground.setState(
+      controls: [],
+      processingState: AudioProcessingState.stopped,
+      playing: false,
+    );
+    _playPauseCompleter.complete();
+  }
+}
+*/

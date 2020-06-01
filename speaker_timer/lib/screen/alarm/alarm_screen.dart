@@ -51,7 +51,7 @@ class _AlarmState extends State<Alarm> {
           AudioService.start(
             backgroundTaskEntrypoint: _textToSpeechTaskEntrypoint,
             androidNotificationChannelName: 'Audio Service Demo',
-            notificationColor: 0xFF2196f3,
+            //notificationColor: 0xFF2196f3,
             androidNotificationIcon: 'mipmap/ic_launcher',
           );
         },
