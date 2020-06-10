@@ -68,7 +68,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                 color: index != pageIndex ? backgroundColor : buttonColor),
             child: Icon(
               icon,
-              color: index == pageIndex ? backgroundColor : accentColor
+              color: index == pageIndex ? backgroundColor : buttonColor
             )),
           onTap: () {
             widget.pageController.animateToPage(index,

@@ -18,9 +18,14 @@ class StopWatch extends StatefulWidget {
   _StopWatchNewState createState() => _StopWatchNewState();
 }
 
+final StopWatchTimer _stopWatchNewTimer = StopWatchTimer();
+
+void _textToSpeechTaskEntrypoint() async {
+  AudioServiceBackground.run(() => TextPlayerTask(_stopWatchNewTimer));
+}
+
 class _StopWatchNewState extends State<StopWatch>
     with SingleTickerProviderStateMixin {
-  final StopWatchTimer _stopWatchNewTimer = StopWatchTimer();
   AnimationController _animationController;
   Animation<double> _animation;
   int previousPlaySecond = 0;
@@ -46,26 +51,35 @@ class _StopWatchNewState extends State<StopWatch>
     _animationController.dispose();
   }
 
+  String getDisplayHour(int value) {
+    final m = (value / 1440000).floor();
+    return m.toString().padLeft(2, '0');
+  }
+
+  String getDisplayTimeMinute(int value) {
+    final m = (value / 60000).floor();
+    return m.toString().padLeft(2, '0');
+  }
+  
+  // Display Time for The Timer mode [hour : minute : second]
+  String getDisplayTime(int value){
+    String second = StopWatchTimer.getDisplayTimeSecond(value);
+    String hour = getDisplayHour(value);
+    value -= int.parse(hour)*1440000;
+    String minute = getDisplayTimeMinute(value);
+    String result = '';
+
+    result += '$hour';
+    result += ':';
+    result += '$minute';
+    result += ':';
+    result += '$second';
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     int currentSecond =_stopWatchNewTimer.secondTime.value;
-
-    String getDisplayHour(int value) {
-      final m = (value / 1440000).floor();
-      return m.toString().padLeft(2, '0');
-    }
-    
-    // Display Time for The Timer mode [hour : minute : second]
-    String getDisplayTime(int value){
-      String result = '';
-
-      result += '${getDisplayHour(value)}';
-      result += ':';
-      result += '${StopWatchTimer.getDisplayTimeMinute(value)}';
-      result += ':';
-      result += '${StopWatchTimer.getDisplayTimeSecond(value)}';
-      return result;
-    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -74,7 +88,7 @@ class _StopWatchNewState extends State<StopWatch>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           /// Display stop watch time
-          StreamBuilder(
+          StreamBuilder<int>(
               initialData: 0,
               stream: _stopWatchNewTimer.rawTime,
               builder: (context, snapshot) {
@@ -110,17 +124,18 @@ class _StopWatchNewState extends State<StopWatch>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  _stopWatchNewTimer.isRunning()
+                  widget.player.isPlaying
                       ?
                       //Pause Button
                       ExpandAnimation(
                           fixWidth: true,
                           child: Button(
-                              onTap: () {
-                                if(currentSecond!=previousPauseSecond){
-                                  AudioService.pause();
+                              onTap: () async {
+                                /*if(currentSecond!=previousPauseSecond){
+                                  await AudioService.pause();
                                   previousPauseSecond = currentSecond;
-                                }
+                                }*/
+                                AudioService.pause();
                                 _pauseSetState(widget.player);
                               },
                               type: 'pause'),
@@ -131,13 +146,14 @@ class _StopWatchNewState extends State<StopWatch>
                           ExpandAnimation(
                               fixHeight: true,
                               child: Button(
-                                  onTap: () {
-                                    AudioService.start(
+                                  onTap: () async {
+                                    await AudioService.start(
                                       backgroundTaskEntrypoint: _textToSpeechTaskEntrypoint,
                                       androidNotificationChannelName: 'Audio Service Demo',
                                       androidNotificationColor: 0xFF2196f3,
                                       androidNotificationIcon: 'mipmap/ic_launcher',
-                                      params: {'stopWatch' : _stopWatchNewTimer}
+                                      params: {'stopWatch' : _stopWatchNewTimer.secondTime.value,
+                                        'title' : (widget.isTimer?'Timer':'StopWatch')}
                                     );
                                     _playSetState(widget.player);
                                   },
@@ -151,11 +167,14 @@ class _StopWatchNewState extends State<StopWatch>
                                 ExpandAnimation(
                                     fixHeight: true,
                                     child: Button(
-                                        onTap: () {
-                                          if(currentSecond!=previousPlaySecond){
-                                            AudioService.play();
+                                        onTap: () async {
+                                          /*if(currentSecond!=previousPlaySecond){
+                                            int milliseconds = _stopWatchNewTimer.rawTime.value;
+                                            print(milliseconds);
+                                            await Future.delayed(Duration(milliseconds: 1000 - milliseconds)).then((_) => AudioService.play());
                                             previousPlaySecond = currentSecond;
-                                          }
+                                          }*/
+                                          AudioService.play();
                                           _playSetState(widget.player);
                                         },
                                         type: 'play'),
@@ -209,8 +228,5 @@ class _StopWatchNewState extends State<StopWatch>
     _stopWatchNewTimer.onExecute.add(StopWatchExecute.reset);
     _animationController.forward();
   }
-  
-  void _textToSpeechTaskEntrypoint() async {
-    AudioServiceBackground.run(() => TextPlayerTask(widget.isTimer?'Timer':'StopWatch'));
-  }
+
 }

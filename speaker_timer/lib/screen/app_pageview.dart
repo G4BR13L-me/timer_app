@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/ad_mob.dart';
@@ -16,10 +17,6 @@ class AppPageViewState extends State<AppPageView> {
 
   PlayStatus timerStatus;
   PlayStatus stopWatchStatus;
-  /*
-  static Ads appAds;
-  static final String appId = 'ca-app-pub-1748335528077671~7826705008';
-  static final String bannerUnitId = 'ca-app-pub-1748335528077671/4218632481';*/
 
   @override
   void dispose() {
@@ -27,19 +24,6 @@ class AppPageViewState extends State<AppPageView> {
     AppAds.dispose();
     super.dispose();
   }
-/*
-  @override
-  void initState() {
-    super.initState();
-
-    appAds = Ads(
-      appId,
-      bannerUnitId: bannerUnitId,
-      testDevices: ["2DB2658AB246A300348AD3A9BEF2A606"],
-      testing: true,
-      size: AdSize.banner
-    );
-  }*/
 
   Widget borderContainer({@required Widget child}) => Container(
     height: double.infinity,
@@ -60,7 +44,8 @@ class AppPageViewState extends State<AppPageView> {
               controller: controller,
               scrollDirection: Axis.vertical,
               children: <Widget>[
-                borderContainer(
+                Container(color:Colors.green),
+                /*borderContainer(
                   child: ChangeNotifierProvider(
                     child: Consumer<PlayStatus>(
                       builder: (context,player,child) {
@@ -69,11 +54,11 @@ class AppPageViewState extends State<AppPageView> {
                           AppAds.showBanner(state: this, anchorOffset: 5.0);
                         else
                           AppAds.removeBanner();
-                        return Timer();
+                        return AudioServiceWidget(child: Timer());
                       }),
                     create: (_)=>PlayStatus(),
                   )
-                ),
+                ),*/
                 borderContainer(
                   child: ChangeNotifierProvider(
                     child: Consumer<PlayStatus>(
@@ -83,7 +68,7 @@ class AppPageViewState extends State<AppPageView> {
                           AppAds.showBanner(state: this, anchorOffset: 5.0);
                         else
                           AppAds.removeBanner();
-                        return Background();
+                        return AudioServiceWidget(child: Background());
                       }),
                     create: (_)=>PlayStatus(),
                   )

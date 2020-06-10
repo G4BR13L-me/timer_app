@@ -4,7 +4,6 @@ import 'package:speaker_timer/screen/background/background.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/timer/widgets/blink.dart';
 import 'package:speaker_timer/screen/timer/widgets/flutter_datetime_picker_lib/src/datetime_picker_theme.dart';
-import '../app_pageview.dart';
 import 'widgets/flutter_datetime_picker_lib/flutter_datetime_picker.dart';
 
 class Timer extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
 
@@ -10,45 +9,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => new _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    connect();
-  }
-
-
-  @override
-  void dispose() {
-    disconnect();
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        connect();
-        break;
-      case AppLifecycleState.paused:
-        disconnect();
-        break;
-      default:
-        break;
-    }
-  }
-
-  void connect() async {
-    await AudioService.connect();
-  }
-
-  void disconnect() {
-    AudioService.disconnect();
-  }
-
+class _MyAppState extends State<MyApp> {
   //|| COLORS: 
   //||  - 6BB8FF -- rgb(107,184,255) 
   //||
@@ -75,8 +36,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData(
         backgroundColor: Color(0xFFF4F6F5),
         primaryColor: Color(0xFFE1BF92),
-        accentColor: Color(0xFF7A8588),
-        buttonColor: Color(0xFFB53B51)
+        accentColor: Color(0xFFB53B51),
+        buttonColor: Color(0xFF7A8588)
       ),
       debugShowCheckedModeBanner: false,
     );
