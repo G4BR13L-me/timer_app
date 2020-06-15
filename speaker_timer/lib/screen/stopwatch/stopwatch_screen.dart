@@ -8,61 +8,29 @@ import 'package:speaker_timer/screen/stopwatch/widgets/button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:vibration/vibration.dart';
 
-class StopWatch extends StatefulWidget {
+class StopWatch extends StatefulWidget{
   final PlayStatus player;
   final int duration;
   final bool isTimer;
 
   StopWatch(this.player,this.duration,this.isTimer);
-  @override
-  _StopWatchNewState createState() => _StopWatchNewState();
-}
 
-final StopWatchTimer _stopWatchNewTimer = StopWatchTimer();
-
-void _textToSpeechTaskEntrypoint() async {
-  AudioServiceBackground.run(() => TextPlayerTask(_stopWatchNewTimer));
-}
-
-class _StopWatchNewState extends State<StopWatch>
-    with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> _animation;
-  int previousPlaySecond = 0;
-  int previousPauseSecond = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
-
-    _animation = Tween<double>(begin: 0, end: 30).animate(CurvedAnimation(
-        parent: _animationController, curve: Curves.easeOutBack));
-
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await _stopWatchNewTimer.dispose();
-    _animationController.dispose();
-  }
-
-  String getDisplayHour(int value) {
+  static String getDisplayHour(int value) {
     final m = (value / 1440000).floor();
     return m.toString().padLeft(2, '0');
   }
 
-  String getDisplayTimeMinute(int value) {
+  static String getDisplayTimeMinute(int value) {
     final m = (value / 60000).floor();
     return m.toString().padLeft(2, '0');
   }
+
+  static int getDisplayTimeSecond(int value) {
+    return (value % 60000 / 1000).floor();
+  }
   
   // Display Time for The Timer mode [hour : minute : second]
-  String getDisplayTime(int value){
+  static String getDisplayTime(int value){
     String second = StopWatchTimer.getDisplayTimeSecond(value);
     String hour = getDisplayHour(value);
     value -= int.parse(hour)*1440000;
@@ -78,9 +46,58 @@ class _StopWatchNewState extends State<StopWatch>
   }
 
   @override
-  Widget build(BuildContext context) {
-    int currentSecond =_stopWatchNewTimer.secondTime.value;
+  _StopWatchNewState createState() => _StopWatchNewState();
+}
 
+void _textToSpeechTaskEntrypoint() async {
+  AudioServiceBackground.run(() => TextPlayerTask());
+}
+
+class _StopWatchNewState extends State<StopWatch>
+    with SingleTickerProviderStateMixin {
+  final StopWatchTimer _stopWatch = StopWatchTimer();
+  AnimationController _animationController;
+  Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _stopWatch.rawTime.listen((value) => AudioService.customAction("setTime", value));
+
+    AudioService.customEventStream.listen((event) {
+      switch (event) {
+        case 'playing':
+          _playSetState(widget.player);
+          break;
+        case 'pause':
+          _pauseSetState(widget.player);
+          break;
+        case 'stop':
+          _resetSetState(widget.player);
+          break;
+        default:
+      }
+    });
+
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
+
+    _animation = Tween<double>(begin: 0, end: 30).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.easeOutBack));
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _stopWatch.dispose();
+    _animationController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -90,7 +107,7 @@ class _StopWatchNewState extends State<StopWatch>
           /// Display stop watch time
           StreamBuilder<int>(
               initialData: 0,
-              stream: _stopWatchNewTimer.rawTime,
+              stream: _stopWatch.rawTime,
               builder: (context, snapshot) {
                 if(widget.isTimer){
                   // Vibrate when the Timer ends
@@ -103,7 +120,7 @@ class _StopWatchNewState extends State<StopWatch>
                 }
                 return Text(
                   widget.isTimer 
-                  ? getDisplayTime(widget.duration - snapshot.data)
+                  ? StopWatch.getDisplayTime(widget.duration - snapshot.data)
                   : StopWatchTimer.getDisplayTime(snapshot.data),
                   style: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 45.0),
                 );
@@ -130,11 +147,7 @@ class _StopWatchNewState extends State<StopWatch>
                       ExpandAnimation(
                           fixWidth: true,
                           child: Button(
-                              onTap: () async {
-                                /*if(currentSecond!=previousPauseSecond){
-                                  await AudioService.pause();
-                                  previousPauseSecond = currentSecond;
-                                }*/
+                              onTap: () {
                                 AudioService.pause();
                                 _pauseSetState(widget.player);
                               },
@@ -152,8 +165,7 @@ class _StopWatchNewState extends State<StopWatch>
                                       androidNotificationChannelName: 'Audio Service Demo',
                                       androidNotificationColor: 0xFF2196f3,
                                       androidNotificationIcon: 'mipmap/ic_launcher',
-                                      params: {'stopWatch' : _stopWatchNewTimer.secondTime.value,
-                                        'title' : (widget.isTimer?'Timer':'StopWatch')}
+                                      params: {'title' : (widget.isTimer?'Timer':'StopWatch')}
                                     );
                                     _playSetState(widget.player);
                                   },
@@ -167,13 +179,7 @@ class _StopWatchNewState extends State<StopWatch>
                                 ExpandAnimation(
                                     fixHeight: true,
                                     child: Button(
-                                        onTap: () async {
-                                          /*if(currentSecond!=previousPlaySecond){
-                                            int milliseconds = _stopWatchNewTimer.rawTime.value;
-                                            print(milliseconds);
-                                            await Future.delayed(Duration(milliseconds: 1000 - milliseconds)).then((_) => AudioService.play());
-                                            previousPlaySecond = currentSecond;
-                                          }*/
+                                        onTap: () {
                                           AudioService.play();
                                           _playSetState(widget.player);
                                         },
@@ -189,7 +195,7 @@ class _StopWatchNewState extends State<StopWatch>
                                 ExpandAnimation(
                                     fixHeight: true,
                                     child: Button(
-                                        onTap: () async {
+                                        onTap: () {
                                           AudioService.stop();
                                           _resetSetState(widget.player);
                                         },
@@ -207,26 +213,25 @@ class _StopWatchNewState extends State<StopWatch>
   }
 
   void _playSetState(PlayStatus playStatus) {
+    _stopWatch.onExecute.add(StopWatchExecute.start);
     _animationController.reset();
     playStatus.isPlaying = true;
     playStatus.reset = false;
-    _stopWatchNewTimer.onExecute.add(StopWatchExecute.start);
     _animationController.forward();
   }
 
   void _pauseSetState(PlayStatus playStatus) {
+    _stopWatch.onExecute.add(StopWatchExecute.stop);
     _animationController.reset();
     playStatus.isPlaying = false;
-    _stopWatchNewTimer.onExecute.add(StopWatchExecute.stop);
     _animationController.forward();
   }
 
   void _resetSetState(PlayStatus playStatus) {
+    _stopWatch.onExecute.add(StopWatchExecute.reset);
     _animationController.reset();
     playStatus.isPlaying = false;
     playStatus.reset = true;
-    _stopWatchNewTimer.onExecute.add(StopWatchExecute.reset);
     _animationController.forward();
   }
-
 }

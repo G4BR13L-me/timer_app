@@ -44,8 +44,7 @@ class AppPageViewState extends State<AppPageView> {
               controller: controller,
               scrollDirection: Axis.vertical,
               children: <Widget>[
-                Container(color:Colors.green),
-                /*borderContainer(
+                borderContainer(
                   child: ChangeNotifierProvider(
                     child: Consumer<PlayStatus>(
                       builder: (context,player,child) {
@@ -58,7 +57,7 @@ class AppPageViewState extends State<AppPageView> {
                       }),
                     create: (_)=>PlayStatus(),
                   )
-                ),*/
+                ),
                 borderContainer(
                   child: ChangeNotifierProvider(
                     child: Consumer<PlayStatus>(
