@@ -20,7 +20,8 @@ MediaControl pauseControl = MediaControl(
 );
 
 class TextPlayerTask extends BackgroundAudioTask {
-  int time;
+  int time = 0;
+  String title;
 
   FlutterTts _tts = FlutterTts();
 
@@ -40,11 +41,10 @@ class TextPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStart(Map<String, dynamic> params) async {
-    time = 0;
-    String title = params['title'];
+    title = params['title'];
     playPause();
     while(true){
-      AudioServiceBackground.setMediaItem(mediaItem(time,title));
+      AudioServiceBackground.setMediaItem(mediaItem(time));
       AudioServiceBackground.androidForceEnableMediaButtons();
       //if(title=='Timer')
         _tts.speak('${StopWatch.getDisplayTimeSecond(time)}');
@@ -62,7 +62,7 @@ class TextPlayerTask extends BackgroundAudioTask {
     }
   }
 
-  MediaItem mediaItem(int number, String title) => MediaItem(
+  MediaItem mediaItem(int number) => MediaItem(
       id: '$number',
       title: title,
       album: StopWatch.getDisplayTime(number),
@@ -70,7 +70,7 @@ class TextPlayerTask extends BackgroundAudioTask {
 
   void playPause() {
     if (_playing) {
-      AudioServiceBackground.sendCustomEvent('pause');
+      AudioServiceBackground.sendCustomEvent('pause$title');
       _tts.stop();
       AudioServiceBackground.setState(
         controls: [playControl, stopControl],
@@ -78,7 +78,7 @@ class TextPlayerTask extends BackgroundAudioTask {
         playing: false,
       );
     } else {
-      AudioServiceBackground.sendCustomEvent('playing');
+      AudioServiceBackground.sendCustomEvent('playing$title');
       AudioServiceBackground.setState(
         controls: [pauseControl, stopControl],
         processingState: AudioProcessingState.ready,
@@ -105,7 +105,7 @@ class TextPlayerTask extends BackgroundAudioTask {
 
   @override
   Future onStop() async {
-    AudioServiceBackground.sendCustomEvent('stop');
+    AudioServiceBackground.sendCustomEvent('stop$title');
     if (_processingState != AudioProcessingState.stopped) {
       _tts.stop();
       await AudioServiceBackground.setState(
@@ -120,9 +120,10 @@ class TextPlayerTask extends BackgroundAudioTask {
 
   @override
   Future onCustomAction(String name, arguments) {
-    if (name == 'setTime') {
-        time = arguments;
+    if (name == 'setTime$title') {
+      time = arguments;
     }
+
     return super.onCustomAction(name, arguments);
   }
 }

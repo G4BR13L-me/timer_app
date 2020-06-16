@@ -9,9 +9,10 @@ import 'package:speaker_timer/screen/stopwatch/stopwatch_screen.dart';
 class Background extends StatefulWidget {
   //The Clock's duration
   final int duration;
-  final bool isTimer;
+  final String title;
+  final PlayStatus otherPlayer;
 
-  Background({this.duration = 20000,this.isTimer = false});
+  Background(this.otherPlayer,this.title,{this.duration = 20000});
 
   @override
   _BackgroundState createState() => _BackgroundState();
@@ -175,7 +176,7 @@ class _BackgroundState extends State<Background>
                 //The middle part of the Hourglass
                 Center(
                   child: Crystal(
-                    child: StopWatch(player,widget.duration,widget.isTimer)
+                    child: StopWatch(player,widget.otherPlayer,widget.duration,widget.title)
                   )
                 ),
               ],

@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
@@ -32,7 +33,7 @@ class _MyAppState extends State<MyApp> {
 
     ));
     return MaterialApp(
-      home: AppPageView(),
+      home: AudioServiceWidget(child: AppPageView()),
       theme: ThemeData(
         backgroundColor: Color(0xFFF4F6F5),
         primaryColor: Color(0xFFE1BF92),

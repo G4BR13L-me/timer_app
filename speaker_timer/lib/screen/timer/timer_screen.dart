@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:speaker_timer/controller/ad_mob.dart';
+import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/background/background.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/timer/widgets/blink.dart';
@@ -7,6 +8,10 @@ import 'package:speaker_timer/screen/timer/widgets/flutter_datetime_picker_lib/s
 import 'widgets/flutter_datetime_picker_lib/flutter_datetime_picker.dart';
 
 class Timer extends StatefulWidget {
+  final PlayStatus otherPlayer;
+
+  Timer(this.otherPlayer);
+
   @override
   _TimerNewState createState() => _TimerNewState();
 }
@@ -66,7 +71,7 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
               )
             )
           ),
-          selected? Background(isTimer: true,duration: millisecond):
+          selected? Background(widget.otherPlayer,'Timer',duration: millisecond):
           IgnorePointer(child: Container(color: Colors.transparent)),
         ],
       ),

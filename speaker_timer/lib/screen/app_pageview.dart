@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speaker_timer/controller/ad_mob.dart';
@@ -36,6 +35,9 @@ class AppPageViewState extends State<AppPageView> {
 
   @override
   Widget build(BuildContext context) {
+    //It controls the ads to don't display banners while any timer is running
+    bool shouldShowBanner = !((stopWatchStatus?.isPlaying)??true)&&!((timerStatus?.isPlaying)??true);
+
     return SafeArea(
       child: borderContainer(
         child: Stack(
@@ -45,29 +47,29 @@ class AppPageViewState extends State<AppPageView> {
               scrollDirection: Axis.vertical,
               children: <Widget>[
                 borderContainer(
-                  child: ChangeNotifierProvider(
+                  child: ChangeNotifierProvider<PlayStatus>(
                     child: Consumer<PlayStatus>(
                       builder: (context,player,child) {
                         timerStatus = player;
-                        if(!((stopWatchStatus?.isPlaying)??true)&&!((timerStatus?.isPlaying)??true))
+                        if(shouldShowBanner)
                           AppAds.showBanner(state: this, anchorOffset: 5.0);
                         else
                           AppAds.removeBanner();
-                        return AudioServiceWidget(child: Timer());
+                        return Timer(stopWatchStatus);
                       }),
                     create: (_)=>PlayStatus(),
                   )
                 ),
                 borderContainer(
-                  child: ChangeNotifierProvider(
+                  child: ChangeNotifierProvider<PlayStatus>(
                     child: Consumer<PlayStatus>(
                       builder: (context,player,child) {
                         stopWatchStatus = player;
-                        if(!((stopWatchStatus?.isPlaying)??true)&&!((timerStatus?.isPlaying)??true))
+                        if(shouldShowBanner)
                           AppAds.showBanner(state: this, anchorOffset: 5.0);
                         else
                           AppAds.removeBanner();
-                        return AudioServiceWidget(child: Background());
+                        return Background(timerStatus,'Stopwatch');
                       }),
                     create: (_)=>PlayStatus(),
                   )
