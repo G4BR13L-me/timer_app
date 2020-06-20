@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class Blink extends StatefulWidget {
   final Widget child;
+  final AnimationController controller;
 
-  Blink({@required this.child});
+  Blink({@required this.child,this.controller});
 
   @override
   _BlinkState createState() => _BlinkState();
@@ -25,11 +26,11 @@ class _BlinkState extends State<Blink> with SingleTickerProviderStateMixin{
     });
 
     _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0
+      begin: 1.0,
+      end: 0.0
     ).animate(
       CurvedAnimation(
-        parent: _controller, 
+        parent: widget.controller??_controller, 
         curve: Curves.easeInOutSine
       )
     );
