@@ -19,8 +19,8 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Timer> {
-  //bool selected = false;
   int millisecond;
+  int repeatTimes;
 
   int dateTimeToMilliSecond(DateTime date){
     return date.second*1000 + date.minute*60000 + date.hour*1440000;
@@ -47,9 +47,10 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
                       AppAds.removeBanner();
 
                       DatePicker.showTimePicker(context, showTitleActions: true,
-                      onConfirm: (date) {
+                      onConfirm: (date,repeat) {
                         player.isTimerSelected = true;
                         millisecond = dateTimeToMilliSecond(date);
+                        repeatTimes=repeat;
                       }, 
                       currentTime: DateTime.now(),
                       theme: DatePickerTheme(

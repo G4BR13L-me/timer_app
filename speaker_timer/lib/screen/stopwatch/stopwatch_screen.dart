@@ -14,9 +14,10 @@ class StopWatch extends StatefulWidget {
   final PlayStatus player;
   final PlayStatus otherPlayer;
   final int duration;
+  final int repeat;
   final String title;
 
-  StopWatch(this.player, this.otherPlayer, this.duration, this.title);
+  StopWatch(this.player, this.otherPlayer, this.duration, this.title,{this.repeat});
 
   static String getDisplayHour(int value) {
     final m = (value / 1440000).floor();
@@ -67,6 +68,7 @@ class _StopWatchNewState extends State<StopWatch>
   AnimationController _animationController;
   AnimationController _blinkController;
   Animation<double> _animation;
+  int currentTimerRun=1;
 
   @override
   void initState() {
@@ -77,25 +79,31 @@ class _StopWatchNewState extends State<StopWatch>
     //Send the stopwatch time to the audio_service isolate
     _stopWatch.rawTime.listen((value) 
       async {
+         AudioService.customAction("setTime${widget.title}", value);
+
         // Handle Timer end
-        if(widget.duration - value<=50){
-           widget.player.isCompleteCount = true;
-          if((widget.otherPlayer?.reset) ?? true) AudioService.pause();
-          _pauseSetState(widget.player);
-          if (await Vibration.hasCustomVibrationsSupport()) {
-            Vibration.vibrate(
-              pattern: [300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450], 
-              intensities: [255, 0, 255,0,0,0,255, 0, 255,0,0,0,255, 0, 255,0,0,0,255, 0, 255]);
-          } else {
-            Vibration.vibrate();
-            await Future.delayed(Duration(milliseconds: 500));
-            Vibration.vibrate();
+        if(widget.title == 'Timer')
+          if(widget.duration - value<=50){
+            if(currentTimerRun!=widget.repeat){
+              //TODO:RESET TIMER IN ORDER TO REPEAT THE COUNTDOWN
+            }else{
+              widget.player.isCompleteCount = true;
+              if((widget.otherPlayer?.reset) ?? true) AudioService.pause();
+              _pauseSetState(widget.player);
+              if (await Vibration.hasCustomVibrationsSupport()) {
+                Vibration.vibrate(
+                  pattern: [300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450], 
+                  intensities: [255, 0, 255,0,0,0,255, 0, 255,0,0,0,255, 0, 255,0,0,0,255, 0, 255]);
+              } else {
+                Vibration.vibrate();
+                await Future.delayed(Duration(milliseconds: 500));
+                Vibration.vibrate();
+              }
+              //Vibration.vibrate(
+              //  pattern: [300, 150, 450], intensities: [255, 0, 255],repeat: 0);
+              _blinkController.forward();
+            }
           }
-          //Vibration.vibrate(
-          //  pattern: [300, 150, 450], intensities: [255, 0, 255],repeat: 0);
-          _blinkController.forward();
-        }
-        AudioService.customAction("setTime${widget.title}", value);
       });
 
     //if the app notification buttons are pressed then this event

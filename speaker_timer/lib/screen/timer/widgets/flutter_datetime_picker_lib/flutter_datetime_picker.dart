@@ -19,6 +19,7 @@ import 'src/i18n_model.dart';
 **/
 
 typedef DateChangedCallback(DateTime time);
+typedef DateTimerCallback(DateTime time,int repeat);
 typedef DateCancelledCallback();
 typedef String StringAtIndexCallBack(int index);
 
@@ -32,7 +33,7 @@ class DatePicker {
     DateTime minTime,
     DateTime maxTime,
     DateChangedCallback onChanged,
-    DateChangedCallback onConfirm,
+    DateTimerCallback onConfirm,
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     DateTime currentTime,
@@ -60,7 +61,7 @@ class DatePicker {
     bool showTitleActions: true,
     bool showSecondsColumn: true,
     DateChangedCallback onChanged,
-    DateChangedCallback onConfirm,
+    DateTimerCallback onConfirm,
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     DateTime currentTime,
@@ -87,7 +88,7 @@ class DatePicker {
     BuildContext context, {
     bool showTitleActions: true,
     DateChangedCallback onChanged,
-    DateChangedCallback onConfirm,
+    DateTimerCallback onConfirm,
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     DateTime currentTime,
@@ -115,7 +116,7 @@ class DatePicker {
     DateTime minTime,
     DateTime maxTime,
     DateChangedCallback onChanged,
-    DateChangedCallback onConfirm,
+    DateTimerCallback onConfirm,
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     DateTime currentTime,
@@ -142,7 +143,7 @@ class DatePicker {
     BuildContext context, {
     bool showTitleActions: true,
     DateChangedCallback onChanged,
-    DateChangedCallback onConfirm,
+    DateTimerCallback onConfirm,
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     BasePickerModel pickerModel,
@@ -179,7 +180,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
 
   final bool showTitleActions;
   final DateChangedCallback onChanged;
-  final DateChangedCallback onConfirm;
+  final DateTimerCallback onConfirm;
   final DateCancelledCallback onCancel;
   final DatePickerTheme theme;
   final LocaleType locale;
@@ -247,11 +248,20 @@ class _DatePickerComponent extends StatefulWidget {
 
 class _DatePickerState extends State<_DatePickerComponent> {
   FixedExtentScrollController leftScrollCtrl, middleScrollCtrl, rightScrollCtrl;
+  TextEditingController repeatController;
 
   @override
   void initState() {
     super.initState();
+    repeatController = TextEditingController()
+    ..text = '1';
     refreshScrollOffset();
+  }
+
+  @override
+  void dispose() {
+    repeatController.dispose();
+    super.dispose();
   }
 
   void refreshScrollOffset() {
@@ -303,11 +313,11 @@ class _DatePickerState extends State<_DatePickerComponent> {
           Column(
             children: <Widget>[
               _renderTitleActionsView(theme),
-              //_renderSubtitleView(theme),
               itemView,
             ],
           ),
-          _renderSubtitleView(theme)
+          _renderSubtitleView(theme),
+          _renderTimerRestartView(theme),
         ],
       );
     }
@@ -476,7 +486,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
               onPressed: () {
                 Navigator.pop(context, widget.pickerModel.finalTime());
                 if (widget.route.onConfirm != null) {
-                  widget.route.onConfirm(widget.pickerModel.finalTime());
+                  widget.route.onConfirm(widget.pickerModel.finalTime(),int.parse(repeatController.text));
                 }
               },
             ),
@@ -534,6 +544,63 @@ class _DatePickerState extends State<_DatePickerComponent> {
     );
   }
 
+  // Timer Restart View
+  Widget _renderTimerRestartView(DatePickerTheme theme) {
+    //String hour = _localeHour();
+    int times = int.parse(repeatController.text);
+    Size size = MediaQuery.of(context).size;
+
+    return Positioned(
+      top: size.height/3,
+      child: Container(
+        height: theme.titleHeight,
+        width: size.width,
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: Text('Repeat', style: theme.itemStyle),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left:16.0,right:8.0),
+              child: GestureDetector(
+                  onTap: times<=1? null: (){
+                    setState(() {
+                      repeatController.text = (times-1).toString();
+                    });
+                  }, 
+                  child: Icon(Icons.remove,
+                    color:times<=1? theme.subTitleStyle.color : theme.itemStyle.color)
+                ),
+            ),
+            Container(
+              width: theme.titleHeight/2,
+              height: theme.titleHeight/2,
+              child: TextField(
+                decoration:null,
+                style: theme.itemStyle,
+                readOnly: true,
+                controller: repeatController,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: GestureDetector(
+                  onTap: (){
+                    setState(() {
+                      repeatController.text = (times+1).toString();
+                    }); 
+                  }, 
+                  child: Icon(Icons.add,color: theme.itemStyle.color)
+                ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+
   String _localeDone() {
     return i18nObjInLocale(widget.locale)['done'];
   }
@@ -569,7 +636,7 @@ class _BottomPickerLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     double maxHeight = theme.containerHeight;
     if (showTitleActions) {
-      maxHeight += theme.titleHeight;
+      maxHeight += 2*theme.titleHeight;
     }
 
     return new BoxConstraints(

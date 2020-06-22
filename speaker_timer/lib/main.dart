@@ -2,7 +2,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
-import 'package:speaker_timer/timer_test.dart';
 
 void main() => runApp(new MyApp());
 
