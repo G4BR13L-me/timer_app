@@ -27,7 +27,7 @@ class _BlinkState extends State<Blink> with SingleTickerProviderStateMixin{
 
     _animation = Tween<double>(
       begin: 1.0,
-      end: 0.0
+      end: 0.2
     ).animate(
       CurvedAnimation(
         parent: widget.controller??_controller, 

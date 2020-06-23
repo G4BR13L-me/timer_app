@@ -38,6 +38,7 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Color(0xFFF4F6F5),
         primaryColor: Color(0xFFE1BF92),
         accentColor: Color(0xFFB53B51),
+        hintColor: Color(0xFF465E8A),//39538A - 465E8A
         buttonColor: Color(0xFF7A8588)
       ),
       debugShowCheckedModeBanner: false,

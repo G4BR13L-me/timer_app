@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class PlayStatus with ChangeNotifier {
   bool _completeCount = false;
+  bool _isRestRunning = false;
   bool _isTimerSelected = false;
   bool _isPlaying = false;
   bool _reset = true;
@@ -27,6 +28,12 @@ class PlayStatus with ChangeNotifier {
   bool get isCompleteCount => _completeCount;
   set isCompleteCount(bool value) {
     _completeCount = value;
+    notifyListeners();
+  }
+
+  bool get isRestRunning => _isRestRunning;
+  set isRestRunning(bool value) {
+    _isRestRunning = value;
     notifyListeners();
   }
 }

@@ -20,6 +20,7 @@ class Timer extends StatefulWidget {
 
 class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Timer> {
   int millisecond;
+  int restTime;
   int repeatTimes;
 
   int dateTimeToMilliSecond(DateTime date){
@@ -41,15 +42,18 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
               Container(color: Colors.transparent) 
               : Center(
                 child: Crystal(
+                  color: Theme.of(context).primaryColor,
                   child: GestureDetector(
                     onTap: (){
                       // Close the APP Ad Banner due to UX while picking the Time
                       AppAds.removeBanner();
 
                       DatePicker.showTimePicker(context, showTitleActions: true,
-                      onConfirm: (date,repeat) {
+                      onConfirm: (date,repeat,rest) {
+                        print('Repeat: $repeat');
                         player.isTimerSelected = true;
                         millisecond = dateTimeToMilliSecond(date);
+                        restTime = dateTimeToMilliSecond(rest);
                         repeatTimes=repeat;
                       }, 
                       currentTime: DateTime.now(),
@@ -58,7 +62,8 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
                         itemStyle: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 18),
                         subTitleStyle: TextStyle(color: Theme.of(context).backgroundColor.withOpacity(0.5), fontSize: 14),
                         cancelStyle: TextStyle(color: Theme.of(context).backgroundColor.withOpacity(0.7), fontSize: 16),
-                        doneStyle: TextStyle(color: Theme.of(context).accentColor, fontSize: 16),
+                        doneStyle: TextStyle(color: Theme.of(context).hintColor, 
+                          fontSize: 16,fontWeight: FontWeight.bold),
                       ),
                       );
                     },
@@ -67,7 +72,8 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
                 )
               ),
               player.isTimerSelected? 
-              Background(widget.otherPlayer,'Timer',duration: millisecond)
+                Background(widget.otherPlayer,'Timer',duration: millisecond,
+                  repeat: repeatTimes,rest:restTime)
               : IgnorePointer(child: Container(color: Colors.transparent)),
             ],
           );

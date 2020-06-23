@@ -65,7 +65,7 @@ class _CustomAppBarState extends State<CustomAppBar>
             width: size.width / 7,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: index != pageIndex ? backgroundColor : buttonColor),
+                color: index != pageIndex ? backgroundColor : Theme.of(context).hintColor),
             child: Icon(
               icon,
               color: index == pageIndex ? backgroundColor : buttonColor

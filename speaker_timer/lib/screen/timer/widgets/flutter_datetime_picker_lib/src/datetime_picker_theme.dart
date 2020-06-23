@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:speaker_timer/screen/timer/widgets/flutter_datetime_picker_lib/flutter_datetime_picker.dart';
 
 // Migrate DiagnosticableMixin to Diagnosticable until
 // https://github.com/flutter/flutter/pull/51495 makes it into stable (v1.15.21)
@@ -10,7 +11,6 @@ class DatePickerTheme with DiagnosticableMixin {
   final TextStyle itemStyle;
   final Color backgroundColor;
   final Color headerColor;
-
   final double containerHeight;
   final double titleHeight;
   final double itemHeight;
@@ -26,4 +26,25 @@ class DatePickerTheme with DiagnosticableMixin {
     this.titleHeight = 44.0,
     this.itemHeight = 36.0,
   });
+
+  DatePickerTheme apply({
+    TextStyle subTitleStyle,
+    TextStyle cancelStyle,
+    TextStyle doneStyle,
+    TextStyle itemStyle,
+    Color backgroundColor,
+    Color headerColor,
+    double containerHeight,
+    double titleHeight,
+    double itemHeight,
+  }){
+
+    return DatePickerTheme(
+      subTitleStyle:subTitleStyle??this.subTitleStyle, cancelStyle:cancelStyle??this.cancelStyle, 
+      doneStyle:doneStyle??this.doneStyle, itemStyle:itemStyle??this.itemStyle,
+      backgroundColor:backgroundColor??this.backgroundColor, headerColor:headerColor??this.headerColor,
+      containerHeight:containerHeight??this.containerHeight, titleHeight:titleHeight??this.titleHeight,
+      itemHeight:itemHeight??this.itemHeight, 
+    );
+  }
 }

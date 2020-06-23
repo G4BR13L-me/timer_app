@@ -1,6 +1,5 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:speaker_timer/animations/blink.dart';
 import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/animations/expand_animation.dart';
@@ -15,9 +14,10 @@ class StopWatch extends StatefulWidget {
   final PlayStatus otherPlayer;
   final int duration;
   final int repeat;
+  final int rest;
   final String title;
 
-  StopWatch(this.player, this.otherPlayer, this.duration, this.title,{this.repeat});
+  StopWatch(this.player, this.otherPlayer, this.duration, this.title,{this.repeat,this.rest});
 
   static String getDisplayHour(int value) {
     final m = (value / 1440000).floor();
@@ -68,28 +68,43 @@ class _StopWatchNewState extends State<StopWatch>
   AnimationController _animationController;
   AnimationController _blinkController;
   Animation<double> _animation;
-  int currentTimerRun=1;
+  int currentTimerRun;
+  int currentDuration;
 
   @override
   void initState() {
     super.initState();
 
     _stopWatch = StopWatchTimer();
-
+    
+    currentTimerRun = 1;
+    currentDuration = widget.duration;
     //Send the stopwatch time to the audio_service isolate
     _stopWatch.rawTime.listen((value) 
       async {
-         AudioService.customAction("setTime${widget.title}", value);
-
         // Handle Timer end
-        if(widget.title == 'Timer')
-          if(widget.duration - value<=50){
+        if(widget.title == 'Timer'){
+          if(currentDuration - value<=50){
             if(currentTimerRun!=widget.repeat){
-              //TODO:RESET TIMER IN ORDER TO REPEAT THE COUNTDOWN
+              _resetSetState(widget.player);
+              Vibration.vibrate();
+              widget.player.isRestRunning=!widget.player.isRestRunning;
+              Future.delayed(Duration(milliseconds: 100))
+              .then((value) {
+                if(!widget.player.isRestRunning){
+                  currentTimerRun++;
+                  currentDuration = widget.duration;
+                }                  
+                else
+                  currentDuration = widget.rest;
+                
+                _playSetState(widget.player);
+              });
             }else{
               widget.player.isCompleteCount = true;
               if((widget.otherPlayer?.reset) ?? true) AudioService.pause();
               _pauseSetState(widget.player);
+              
               if (await Vibration.hasCustomVibrationsSupport()) {
                 Vibration.vibrate(
                   pattern: [300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450,1000,1000,1000,300, 150, 450], 
@@ -104,6 +119,9 @@ class _StopWatchNewState extends State<StopWatch>
               _blinkController.forward();
             }
           }
+          AudioService.customAction("setTime${widget.title}", currentDuration - value);
+        }else
+          AudioService.customAction("setTime${widget.title}", value);
       });
 
     //if the app notification buttons are pressed then this event
@@ -160,10 +178,10 @@ class _StopWatchNewState extends State<StopWatch>
 
   @override
   void dispose() {
-    super.dispose();
     _stopWatch.dispose();
     _blinkController?.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   Widget _playButton(Function onTap) {
@@ -224,12 +242,12 @@ class _StopWatchNewState extends State<StopWatch>
                 if (isTimer)
                   // Show Timer
                   return Blink(
-                    child: TimeText(StopWatch.getDisplayTime(widget.duration - snapshot.data)),
+                    child: TimeText(StopWatch.getDisplayTime(currentDuration - snapshot.data)),
                     controller:_blinkController
                   );
                 else {
                   // Vibrate every time the time is multiple of the widget.duration parameter
-                  if ((snapshot.data % widget.duration < 100) &&
+                  if ((snapshot.data % currentDuration < 100) &&
                       snapshot.data > 100)
                     Vibration.vibrate(
                         pattern: [300, 150, 450], intensities: [255, 0, 255]);
@@ -323,6 +341,11 @@ class _StopWatchNewState extends State<StopWatch>
     _animationController.reset();
     playStatus.isPlaying = false;
     playStatus.reset = true;
+    widget.player.isCompleteCount = false;
+
+    if(!playStatus.isRestRunning)
+      widget.player.isRestRunning=false;
+
     _animationController.forward();
   }
 }

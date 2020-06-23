@@ -10,10 +10,11 @@ class Background extends StatefulWidget {
   //The Clock's duration
   final int duration;
   final int repeat;
+  final int rest;
   final String title;
   final PlayStatus otherPlayer;
 
-  Background(this.otherPlayer,this.title,{this.duration = 20000,this.repeat});
+  Background(this.otherPlayer,this.title,{this.duration = 20000,this.repeat,this.rest});
 
   @override
   _BackgroundState createState() => _BackgroundState();
@@ -80,13 +81,16 @@ class _BackgroundState extends State<Background>
 
     return Consumer<PlayStatus>(
       builder: (context, player, child) {
-        if (player.isPlaying) {
-          controller.repeat();
-        } else if (player.reset) {
-          controller.reset();
-        } else {
+        if(!player.isRestRunning){
+          if (player.isPlaying) {
+            controller.repeat();
+          } else if (player.reset) {
+            controller.reset();
+          } else {
+            controller.stop();
+          }
+        }else
           controller.stop();
-        }
         return Container(
             color: Theme.of(context).backgroundColor,
             width: size.width,
@@ -177,7 +181,11 @@ class _BackgroundState extends State<Background>
                 //The middle part of the Hourglass
                 Center(
                   child: Crystal(
-                    child: StopWatch(player,widget.otherPlayer,widget.duration,widget.title,repeat: widget.repeat),
+                    color: player.isRestRunning? 
+                      Theme.of(context).accentColor
+                      :Theme.of(context).primaryColor,
+                    child: StopWatch(player,widget.otherPlayer,widget.duration,widget.title,
+                      repeat: widget.repeat, rest:widget.rest),
                   )
                 ),
               ],

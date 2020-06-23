@@ -2,6 +2,7 @@ library flutter_datetime_picker;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:speaker_timer/animations/blink.dart';
 import 'dart:async';
 import 'src/date_model.dart';
 import 'src/datetime_picker_theme.dart';
@@ -19,7 +20,7 @@ import 'src/i18n_model.dart';
 **/
 
 typedef DateChangedCallback(DateTime time);
-typedef DateTimerCallback(DateTime time,int repeat);
+typedef DateTimerCallback(DateTime time,int repeat,DateTime rest);
 typedef DateCancelledCallback();
 typedef String StringAtIndexCallBack(int index);
 
@@ -59,6 +60,7 @@ class DatePicker {
   static Future<DateTime> showTimePicker(
     BuildContext context, {
     bool showTitleActions: true,
+    bool showRepeatView: true,
     bool showSecondsColumn: true,
     DateChangedCallback onChanged,
     DateTimerCallback onConfirm,
@@ -71,6 +73,7 @@ class DatePicker {
         context,
         new _DatePickerRoute(
             showTitleActions: showTitleActions,
+            showRepeatView: showRepeatView,
             onChanged: onChanged,
             onConfirm: onConfirm,
             onCancel: onCancel,
@@ -166,6 +169,7 @@ class DatePicker {
 class _DatePickerRoute<T> extends PopupRoute<T> {
   _DatePickerRoute({
     this.showTitleActions,
+    this.showRepeatView,
     this.onChanged,
     this.onConfirm,
     this.onCancel,
@@ -179,6 +183,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         super(settings: settings);
 
   final bool showTitleActions;
+  final bool showRepeatView;
   final DateChangedCallback onChanged;
   final DateTimerCallback onConfirm;
   final DateCancelledCallback onCancel;
@@ -246,21 +251,32 @@ class _DatePickerComponent extends StatefulWidget {
   }
 }
 
-class _DatePickerState extends State<_DatePickerComponent> {
+class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProviderStateMixin {
   FixedExtentScrollController leftScrollCtrl, middleScrollCtrl, rightScrollCtrl;
-  TextEditingController repeatController;
+  String repeatController;
+  String selectedTime;
+  DateTime rest;
+  AnimationController controller;
 
   @override
   void initState() {
     super.initState();
-    repeatController = TextEditingController()
-    ..text = '1';
+    repeatController = '1';
+    selectedTime = "00:00:00";
+    rest = DateTime(2020);
+    controller = AnimationController(vsync: this,duration: Duration(seconds:1))
+    ..addListener(() {
+        if(controller.isCompleted)
+          controller.reverse();
+        else if(controller.isDismissed)
+          controller.forward();
+      });
     refreshScrollOffset();
   }
 
   @override
   void dispose() {
-    repeatController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -285,7 +301,8 @@ class _DatePickerState extends State<_DatePickerComponent> {
           return ClipRect(
             child: CustomSingleChildLayout(
               delegate: _BottomPickerLayout(widget.route.animation.value, theme,
-                  showTitleActions: widget.route.showTitleActions, bottomPadding: bottomPadding),
+                  showTitleActions: widget.route.showTitleActions, showRepeatView:widget.route.showRepeatView,
+                  bottomPadding: bottomPadding),
               child: GestureDetector(
                 child: Material(
                   color: theme.backgroundColor ?? Colors.white,
@@ -314,10 +331,14 @@ class _DatePickerState extends State<_DatePickerComponent> {
             children: <Widget>[
               _renderTitleActionsView(theme),
               itemView,
+              if(widget.route.showRepeatView)
+              Divider(color: theme.cancelStyle.color,thickness: 0.5,
+              indent: 20,endIndent: 20,)
             ],
           ),
           _renderSubtitleView(theme),
-          _renderTimerRestartView(theme),
+          if(widget.route.showRepeatView)
+            _renderTimerRestartView(theme)
         ],
       );
     }
@@ -486,7 +507,8 @@ class _DatePickerState extends State<_DatePickerComponent> {
               onPressed: () {
                 Navigator.pop(context, widget.pickerModel.finalTime());
                 if (widget.route.onConfirm != null) {
-                  widget.route.onConfirm(widget.pickerModel.finalTime(),int.parse(repeatController.text));
+                  widget.route.onConfirm(widget.pickerModel.finalTime(),
+                  int.parse(repeatController),rest);
                 }
               },
             ),
@@ -546,59 +568,109 @@ class _DatePickerState extends State<_DatePickerComponent> {
 
   // Timer Restart View
   Widget _renderTimerRestartView(DatePickerTheme theme) {
-    //String hour = _localeHour();
-    int times = int.parse(repeatController.text);
+    //TODO:String Title = _localeTitle();
+    int times = int.parse(repeatController);
+    if(times>1)
+      controller.forward();
+    else{
+      controller.reset();
+      controller.stop();
+    }
+      
     Size size = MediaQuery.of(context).size;
 
     return Positioned(
-      top: size.height/3,
-      child: Container(
+      top: size.height/2.6,
+      child: Column(
+        children: [
+          Container(
+            height: theme.titleHeight,
+            width: size.width,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left:8.0),
+                  child: Text('Repeat', style: theme.itemStyle),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left:16.0,right:8.0),
+                  child: GestureDetector(
+                      onTap: times<=1? null: (){
+                        setState(() {
+                          repeatController = (times-1).toString();
+                        });
+                      }, 
+                      child: Icon(Icons.remove,
+                        color:times<=1? theme.subTitleStyle.color : theme.itemStyle.color)
+                    ),
+                ),
+
+                Text(repeatController, style: theme.itemStyle),
+                
+                Padding(
+                  padding: const EdgeInsets.only(left:8.0),
+                  child: GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          repeatController = (times+1).toString();
+                        }); 
+                      }, 
+                      child: Icon(Icons.add,color: theme.itemStyle.color)
+                    ),
+                ),
+              ],
+            ),
+          ),
+          _renderTimerRestView(theme),
+        ],
+      )
+    );
+  }
+
+  Widget _renderTimerRestView(DatePickerTheme theme) {
+    //TODO:String Title = _localeTitle();
+    int times = int.parse(repeatController);
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
         height: theme.titleHeight,
         width: size.width,
         child: Row(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left:8.0),
-              child: Text('Repeat', style: theme.itemStyle),
+              child: Text('Rest Time :', style: theme.itemStyle),
             ),
             Padding(
               padding: const EdgeInsets.only(left:16.0,right:8.0),
               child: GestureDetector(
                   onTap: times<=1? null: (){
-                    setState(() {
-                      repeatController.text = (times-1).toString();
-                    });
+                    DatePicker.showTimePicker(
+                      context, 
+                      showTitleActions: true,
+                      showRepeatView: false,
+                      onConfirm: (date,repeat,_) {
+                        setState(() {
+                          rest = date;
+                          selectedTime ="${date.hour}:${date.minute}:${date.second}";
+                        });
+                      }, 
+                      currentTime: DateTime.now(),
+                      theme: theme.apply(backgroundColor: Theme.of(context).buttonColor,
+                      doneStyle: theme.doneStyle.apply(color: Theme.of(context).accentColor))
+                    );
                   }, 
-                  child: Icon(Icons.remove,
-                    color:times<=1? theme.subTitleStyle.color : theme.itemStyle.color)
-                ),
-            ),
-            Container(
-              width: theme.titleHeight/2,
-              height: theme.titleHeight/2,
-              child: TextField(
-                decoration:null,
-                style: theme.itemStyle,
-                readOnly: true,
-                controller: repeatController,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left:8.0),
-              child: GestureDetector(
-                  onTap: (){
-                    setState(() {
-                      repeatController.text = (times+1).toString();
-                    }); 
-                  }, 
-                  child: Icon(Icons.add,color: theme.itemStyle.color)
+                  child: Blink(
+                    controller: controller,
+                    child: Text(selectedTime,
+                      style:theme.itemStyle
+                      .apply(color:times<=1? theme.subTitleStyle.color : theme.itemStyle.color)),
+                  )
                 ),
             ),
           ],
         ),
-      )
-    );
+      );
   }
 
   String _localeDone() {
@@ -624,11 +696,12 @@ class _DatePickerState extends State<_DatePickerComponent> {
 
 class _BottomPickerLayout extends SingleChildLayoutDelegate {
   _BottomPickerLayout(this.progress, this.theme,
-      {this.itemCount, this.showTitleActions, this.bottomPadding = 0});
+      {this.itemCount, this.showTitleActions, this.showRepeatView, this.bottomPadding = 0});
 
   final double progress;
   final int itemCount;
   final bool showTitleActions;
+  final bool showRepeatView;
   final DatePickerTheme theme;
   final double bottomPadding;
 
@@ -636,7 +709,10 @@ class _BottomPickerLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     double maxHeight = theme.containerHeight;
     if (showTitleActions) {
-      maxHeight += 2*theme.titleHeight;
+      if(showRepeatView)
+        maxHeight += 3.5*theme.titleHeight;
+      else
+        maxHeight += theme.titleHeight;
     }
 
     return new BoxConstraints(

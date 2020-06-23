@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class Crystal extends StatelessWidget {
-  Crystal({@required this.child});
+  Crystal({@required this.child,@required this.color});
   final Widget child;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class Crystal extends StatelessWidget {
           height: size.width / 4,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Theme.of(context).primaryColor,),
+              color: color,),
           child: Transform.rotate(
             angle: -0.8,
             child: child
@@ -33,7 +34,7 @@ class Crystal extends StatelessWidget {
           height: size.height / 3.3,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Theme.of(context).primaryColor,
+              color: color,
               boxShadow: [BoxShadow(
                 blurRadius: 2.0,
               )]),
