@@ -229,41 +229,9 @@ String formatDate(DateTime date, List<String> formats, LocaleType locale) {
       //today
       return i18nObjInLocale(locale)['today'];
     } else if (date.year == now.year) {
-      if (locale == LocaleType.zh) {
-        return formatDate(date, [mm, '月', dd, '日 ', D], locale);
-      } else if (locale == LocaleType.nl) {
-        return formatDate(date, [D, ' ', dd, ' ', M], locale);
-      } else if (locale == LocaleType.ko) {
-        return formatDate(date, [mm, '월', dd, '일 ', D], locale);
-      } else if (locale == LocaleType.de) {
-        return formatDate(date, [D, ', ', dd, '. ', M], locale);
-      } else if (locale == LocaleType.id) {
-        return formatDate(date, [D, ', ', dd, ' ', M], locale);
-      } else if (locale == LocaleType.jp) {
-        return formatDate(date, [mm, '月', dd, '日', D], locale);
-      } else if (locale == LocaleType.si) {
-        return formatDate(date, [D, ', ', dd, '. ', M, '.'], locale);
-      } else {
-        return formatDate(date, [D, ' ', M, ' ', dd], locale);
-      }
+      return formatDate(date, [D, ' ', M, ' ', dd], locale);
     } else {
-      if (locale == LocaleType.zh) {
-        return formatDate(date, [yyyy, '年', mm, '月', dd, '日 ', D], locale);
-      } else if (locale == LocaleType.nl) {
-        return formatDate(date, [D, ' ', dd, ' ', M, ' ', yyyy], locale);
-      } else if (locale == LocaleType.ko) {
-        return formatDate(date, [yyyy, '년', mm, '월', dd, '일 ', D], locale);
-      } else if (locale == LocaleType.de) {
-        return formatDate(date, [D, ', ', dd, '. ', M, ' ', yyyy], locale);
-      } else if (locale == LocaleType.id) {
-        return formatDate(date, [D, ', ', dd, ' ', M, ' ', yyyy], locale);
-      } else if (locale == LocaleType.jp) {
-        return formatDate(date, [yyyy, '年', mm, '月', dd, '日', D], locale);
-      } else if (locale == LocaleType.si) {
-        return formatDate(date, [D, ', ', dd, '. ', M, '. ', yyyy], locale);
-      } else {
-        return formatDate(date, [D, ' ', M, ' ', dd, ', ', yyyy], locale);
-      }
+      return formatDate(date, [D, ' ', M, ' ', dd, ', ', yyyy], locale);
     }
   }
 
@@ -296,9 +264,6 @@ String formatDate(DateTime date, List<String> formats, LocaleType locale) {
       sb.write(digits((dayInYear(date) + 7) ~/ 7, 2));
     } else if (format == D) {
       String day = i18nObjInLocale(locale)['day'][date.weekday - 1];
-      if (locale == LocaleType.ko) {
-        day = "($day)";
-      }
       sb.write(day);
     } else if (format == HH) {
       sb.write(digits(date.hour, 2));

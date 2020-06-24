@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speaker_timer/screen/app_pageview.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(new MyApp());
 
@@ -33,6 +34,17 @@ class _MyAppState extends State<MyApp> {
 
     ));
     return MaterialApp(
+       localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+          const Locale('en', ''), // English
+          const Locale('it', ''), // Italian
+          const Locale('fr', ''), // French
+          const Locale('es', ''), // Spanish
+          const Locale('pt', ''), // Portuguese
+        ],
       home: AudioServiceWidget(child: AppPageView()),
       theme: ThemeData(
         backgroundColor: Color(0xFFF4F6F5),

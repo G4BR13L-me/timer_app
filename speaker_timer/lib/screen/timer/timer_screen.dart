@@ -8,6 +8,7 @@ import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/stopwatch/widgets/time_text.dart';
 import 'package:speaker_timer/screen/timer/widgets/flutter_datetime_picker_lib/src/datetime_picker_theme.dart';
 import 'widgets/flutter_datetime_picker_lib/flutter_datetime_picker.dart';
+import 'widgets/flutter_datetime_picker_lib/src/i18n_model.dart';
 
 class Timer extends StatefulWidget {
   final PlayStatus otherPlayer;
@@ -27,9 +28,25 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
     return date.second*1000 + date.minute*60000 + date.hour*1440000;
   }
 
+  dynamic _getLocale (String locale) {
+    switch (locale) {
+      case 'it':
+        return LocaleType.it;
+      case 'fr':
+        return LocaleType.fr;
+      case 'es':
+        return LocaleType.es;
+      case 'pt':
+        return LocaleType.pt;
+      default:
+        return LocaleType.en;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    Locale locale = Localizations.localeOf(context);
     return Container(
       width: double.infinity,
       height:double.infinity,
@@ -48,9 +65,10 @@ class _TimerNewState extends State<Timer> with AutomaticKeepAliveClientMixin<Tim
                       // Close the APP Ad Banner due to UX while picking the Time
                       AppAds.removeBanner();
 
-                      DatePicker.showTimePicker(context, showTitleActions: true,
+                      DatePicker.showTimePicker(context, 
+                      showTitleActions: true,
+                      locale: _getLocale(locale.languageCode),
                       onConfirm: (date,repeat,rest) {
-                        print('Repeat: $repeat');
                         player.isTimerSelected = true;
                         millisecond = dateTimeToMilliSecond(date);
                         restTime = dateTimeToMilliSecond(rest);

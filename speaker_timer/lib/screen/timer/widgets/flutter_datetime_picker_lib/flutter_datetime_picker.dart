@@ -84,86 +84,6 @@ class DatePicker {
                 currentTime: currentTime, locale: locale, showSecondsColumn: showSecondsColumn)));
   }
 
-  ///
-  /// Display time picker bottom sheet with AM/PM.
-  ///
-  static Future<DateTime> showTime12hPicker(
-    BuildContext context, {
-    bool showTitleActions: true,
-    DateChangedCallback onChanged,
-    DateTimerCallback onConfirm,
-    DateCancelledCallback onCancel,
-    locale: LocaleType.en,
-    DateTime currentTime,
-    DatePickerTheme theme,
-  }) async {
-    return await Navigator.push(
-        context,
-        new _DatePickerRoute(
-            showTitleActions: showTitleActions,
-            onChanged: onChanged,
-            onConfirm: onConfirm,
-            onCancel: onCancel,
-            locale: locale,
-            theme: theme,
-            barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-            pickerModel: Time12hPickerModel(currentTime: currentTime, locale: locale)));
-  }
-
-  ///
-  /// Display date&time picker bottom sheet.
-  ///
-  static Future<DateTime> showDateTimePicker(
-    BuildContext context, {
-    bool showTitleActions: true,
-    DateTime minTime,
-    DateTime maxTime,
-    DateChangedCallback onChanged,
-    DateTimerCallback onConfirm,
-    DateCancelledCallback onCancel,
-    locale: LocaleType.en,
-    DateTime currentTime,
-    DatePickerTheme theme,
-  }) async {
-    return await Navigator.push(
-        context,
-        new _DatePickerRoute(
-            showTitleActions: showTitleActions,
-            onChanged: onChanged,
-            onConfirm: onConfirm,
-            onCancel: onCancel,
-            locale: locale,
-            theme: theme,
-            barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-            pickerModel: DateTimePickerModel(
-                currentTime: currentTime, minTime: minTime, maxTime: maxTime, locale: locale)));
-  }
-
-  ///
-  /// Display date picker bottom sheet witch custom picker model.
-  ///
-  static Future<DateTime> showPicker(
-    BuildContext context, {
-    bool showTitleActions: true,
-    DateChangedCallback onChanged,
-    DateTimerCallback onConfirm,
-    DateCancelledCallback onCancel,
-    locale: LocaleType.en,
-    BasePickerModel pickerModel,
-    DatePickerTheme theme,
-  }) async {
-    return await Navigator.push(
-        context,
-        new _DatePickerRoute(
-            showTitleActions: showTitleActions,
-            onChanged: onChanged,
-            onConfirm: onConfirm,
-            onCancel: onCancel,
-            locale: locale,
-            theme: theme,
-            barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-            pickerModel: pickerModel));
-  }
 }
 
 class _DatePickerRoute<T> extends PopupRoute<T> {
@@ -467,8 +387,8 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
 
   // Title View
   Widget _renderTitleActionsView(DatePickerTheme theme) {
-    String done = _localeDone();
-    String cancel = _localeCancel();
+    String done = _getTranslation('done');
+    String cancel = _getTranslation('cancel');
 
     return Container(
       height: theme.titleHeight,
@@ -520,9 +440,9 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
 
   // Subtitle View
   Widget _renderSubtitleView(DatePickerTheme theme) {
-    String hour = _localeHour();
-    String minute = _localeMinute();
-    String second = _localeSecond();
+    String hour = _getTranslation('hour');
+    String minute = _getTranslation('minute');
+    String second = _getTranslation('second');
     Size size = MediaQuery.of(context).size;
 
     return Positioned(
@@ -568,7 +488,7 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
 
   // Timer Restart View
   Widget _renderTimerRestartView(DatePickerTheme theme) {
-    //TODO:String Title = _localeTitle();
+    String title = _getTranslation('repeat');
     int times = int.parse(repeatController);
     if(times>1)
       controller.forward();
@@ -590,7 +510,7 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left:8.0),
-                  child: Text('Repeat', style: theme.itemStyle),
+                  child: Text(title, style: theme.itemStyle),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left:16.0,right:8.0),
@@ -628,7 +548,7 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
   }
 
   Widget _renderTimerRestView(DatePickerTheme theme) {
-    //TODO:String Title = _localeTitle();
+    String title = _getTranslation('rest time');
     int times = int.parse(repeatController);
     Size size = MediaQuery.of(context).size;
 
@@ -639,7 +559,7 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left:8.0),
-              child: Text('Rest Time :', style: theme.itemStyle),
+              child: Text('$title :', style: theme.itemStyle),
             ),
             Padding(
               padding: const EdgeInsets.only(left:16.0,right:8.0),
@@ -672,25 +592,9 @@ class _DatePickerState extends State<_DatePickerComponent> with SingleTickerProv
         ),
       );
   }
-
-  String _localeDone() {
-    return i18nObjInLocale(widget.locale)['done'];
-  }
-
-  String _localeCancel() {
-    return i18nObjInLocale(widget.locale)['cancel'];
-  }
-
-  String _localeHour() {
-    return i18nObjInLocale(widget.locale)['hour'];
-  }
-
-  String _localeMinute() {
-    return i18nObjInLocale(widget.locale)['minute'];
-  }
   
-  String _localeSecond() {
-    return i18nObjInLocale(widget.locale)['second'];
+  String _getTranslation(String word) {
+    return i18nObjInLocale(widget.locale)[word];
   }
 }
 
