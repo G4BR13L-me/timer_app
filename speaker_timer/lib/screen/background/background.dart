@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:speaker_timer/controller/ad_mob.dart';
 import 'package:speaker_timer/controller/status.dart';
 import 'package:speaker_timer/screen/background/widgets/crystal.dart';
 import 'package:speaker_timer/screen/background/widgets/sand.dart';
@@ -71,16 +72,17 @@ class _BackgroundState extends State<Background>
     print(size.height);
 
     final Image img = Image.asset(
-      size.width > size.height
-          ? 'assets/hourglass_landscape.png'
-          : 'assets/hourglass.png',
+      'assets/hourglass.png',
       fit: BoxFit.fill,
-      //width: 2.0 / 3.0 * size.width,
-      //height: size.height * 0.8,
+      width: 2.0 / 3.0 * size.width,
+      height: size.height * 0.8,
     );
 
     return Consumer<PlayStatus>(
       builder: (context, player, child) {
+        //It controls the ads to don't display banners while any timer is running
+        bool shouldShowBanner = !((player?.isPlaying)??true)&&!((widget.otherPlayer?.isPlaying)??true);
+
         if(!player.isRestRunning){
           if (player.isPlaying) {
             controller.repeat();
@@ -91,6 +93,12 @@ class _BackgroundState extends State<Background>
           }
         }else
           controller.stop();
+        
+        if(shouldShowBanner)
+          AppAds.showBanner(state: this, anchorOffset: 5.0);
+        else
+          AppAds.removeBanner();
+
         return Container(
             color: Theme.of(context).backgroundColor,
             width: size.width,

@@ -18,6 +18,13 @@ class AppPageViewState extends State<AppPageView> {
   PlayStatus stopWatchStatus;
 
   @override
+  void initState() {
+    super.initState();
+    timerStatus = PlayStatus();
+    stopWatchStatus = PlayStatus();
+  }
+
+  @override
   void dispose() {
     controller.dispose();
     AppAds.dispose();
@@ -35,9 +42,6 @@ class AppPageViewState extends State<AppPageView> {
 
   @override
   Widget build(BuildContext context) {
-    //It controls the ads to don't display banners while any timer is running
-    bool shouldShowBanner = !((stopWatchStatus?.isPlaying)??true)&&!((timerStatus?.isPlaying)??true);
-
     return SafeArea(
       child: borderContainer(
         child: Stack(
@@ -47,31 +51,15 @@ class AppPageViewState extends State<AppPageView> {
               scrollDirection: Axis.vertical,
               children: <Widget>[
                 borderContainer(
-                  child: ChangeNotifierProvider<PlayStatus>(
-                    child: Consumer<PlayStatus>(
-                      builder: (context,player,child) {
-                        timerStatus = player;
-                        if(shouldShowBanner)
-                          AppAds.showBanner(state: this, anchorOffset: 5.0);
-                        else
-                          AppAds.removeBanner();
-                        return Timer(stopWatchStatus);
-                      }),
-                    create: (_)=>PlayStatus(),
+                  child: ChangeNotifierProvider<PlayStatus>.value(
+                    child: Timer(stopWatchStatus),
+                    value: timerStatus,
                   )
                 ),
                 borderContainer(
-                  child: ChangeNotifierProvider<PlayStatus>(
-                    child: Consumer<PlayStatus>(
-                      builder: (context,player,child) {
-                        stopWatchStatus = player;
-                        if(shouldShowBanner)
-                          AppAds.showBanner(state: this, anchorOffset: 5.0);
-                        else
-                          AppAds.removeBanner();
-                        return Background(timerStatus,'Stopwatch');
-                      }),
-                    create: (_)=>PlayStatus(),
+                  child: ChangeNotifierProvider<PlayStatus>.value(
+                      child: Background(timerStatus, 'Stopwatch'),
+                    value: stopWatchStatus,
                   )
                 ),
               ],

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:speaker_timer/controller/ad_mob.dart';
+import 'package:speaker_timer/screen/config.dart';
+
 class CustomAppBar extends StatefulWidget {
   final PageController pageController;
 
@@ -58,19 +61,27 @@ class _CustomAppBarState extends State<CustomAppBar>
     Color buttonColor = Theme.of(context).buttonColor;
     Color backgroundColor = Theme.of(context).backgroundColor;
 
-    Widget _barButton(IconData icon, int index) => GestureDetector(
+    Widget _barButton(IconData icon, int index,{EdgeInsets margin,Function onTap}) => 
+    GestureDetector(
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: controller.isDismissed ? 0 : 7),
+            margin: margin?? EdgeInsets.symmetric(horizontal: controller.isDismissed ? 0 : 7),
             height: size.height / 16,
             width: size.width / 7,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color: index != pageIndex ? backgroundColor : Theme.of(context).hintColor),
-            child: Icon(
-              icon,
-              color: index == pageIndex ? backgroundColor : buttonColor
+            child: Row(
+              mainAxisAlignment:MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: index == pageIndex ? backgroundColor : buttonColor
+                ),
+                if(controller.isCompleted)
+                  Text('Textooo')
+              ],
             )),
-          onTap: () {
+          onTap:onTap?? () {
             widget.pageController.animateToPage(index,
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOutCubic);
@@ -98,6 +109,9 @@ class _CustomAppBarState extends State<CustomAppBar>
               ],
             ),
             onTap: () {
+              // Close the APP Ad Banner due to UX while picking the Time
+              AppAds.removeBanner();
+              
               if (!controller.isCompleted)
                 controller.forward();
               else
@@ -128,8 +142,17 @@ class _CustomAppBarState extends State<CustomAppBar>
             children: <Widget>[
               _appIcon(),
               Divider(),
-              _barButton(Icons.timer, 0),
+              _barButton(Icons.av_timer, 0),
               _barButton(Icons.hourglass_empty, 1),
+              _barButton(Icons.settings,3,
+                margin: EdgeInsets.only(left: controller.isDismissed ? 0 : 3.5,
+                                        right: controller.isDismissed ? 0 : 3.5,
+                                        top: 300),
+                  onTap: (){
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Configuration(),),
+                    );
+                  })
             ],
           ),
         );

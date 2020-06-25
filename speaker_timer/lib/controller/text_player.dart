@@ -43,11 +43,25 @@ class TextPlayerTask extends BackgroundAudioTask {
   Future<void> onStart(Map<String, dynamic> params) async {
     title = params['title'];
     playPause();
+    int currentTime=0;
     while(true){
       AudioServiceBackground.setMediaItem(mediaItem(time));
       AudioServiceBackground.androidForceEnableMediaButtons();
-      //if(title=='Timer')
-        _tts.speak('${StopWatch.getDisplayTimeSecond(time)}');
+      if(title=='Timer'){
+        currentTime = StopWatch.getDisplayTimeSecond(time);
+        switch (currentTime) {
+          case 3:
+          case 2:
+          case 1:
+            _tts.speak('$currentTime');
+            break;
+          default:
+            _tts.speak(' ');
+            break;
+        }
+      }else{
+        _tts.speak(' ');
+      }
       
       // Wait for the speech or a pause request.
       await Future.any(

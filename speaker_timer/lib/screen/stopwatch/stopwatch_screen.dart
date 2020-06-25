@@ -280,10 +280,10 @@ class _StopWatchNewState extends State<StopWatch>
                                     backgroundTaskEntrypoint:
                                         _textToSpeechTaskEntrypoint,
                                     androidNotificationChannelName:
-                                        'Audio Service Demo',
-                                    androidNotificationColor: 0xFF2196f3,
+                                        'Background Time',
+                                    androidNotificationColor:0xFF7A8588,
                                     androidNotificationIcon:
-                                        'mipmap/ic_launcher',
+                                        'drawable/ic_hourglass_icon',
                                     params: {'title': widget.title});
                               }
                               _playSetState(widget.player);

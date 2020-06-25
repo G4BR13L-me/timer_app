@@ -9,7 +9,7 @@ class Crystal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+/*
     if(size.width>size.height)
     return Transform(
       origin: Offset(size.width/8.0,size.width/8.0),
@@ -26,7 +26,7 @@ class Crystal extends StatelessWidget {
         ), 
         transform: Matrix4.translationValues(size.width/10.0, -size.height/70, 0)..rotateZ(math.pi/4.0),
         );
-      else
+      else*/
       return Transform(
       origin: Offset( size.height/6.6,size.height/6.6),
         child: Container(
